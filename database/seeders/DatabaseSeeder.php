@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\CategoryModel;
 use Illuminate\Database\Seeder;
+use Database\Factories\CategoriesFactory;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,8 +16,15 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call('UsersTableSeeder');
-        $this->call([
-            ProductCatSeeder::class,
-        ]);
+        $this->call(CategoriesSeeder::class);
+        $this->call(SubCategoriesSeeder::class);
+        $this->call(StoresSeeder::class);
+        $this->call(UserSeeder::class);
+
+        // CategoryModel::factory()
+        //     ->count(50)
+        //     ->create();
+
+
     }
 }

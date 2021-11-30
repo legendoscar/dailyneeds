@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-// use App\Models\ProductsCatModel;
-use App\Models\ProductsSubCatModel;
+// use App\Models\SubCatModel;
+use App\Models\SubCatModel;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -19,7 +19,7 @@ class ProdSubCatController extends Controller
     {
 
        try {
-           $data = ProductsSubCatModel::all();
+           $data = SubCatModel::all();
            !empty($data)
            ? $ret = response()->json([
                'data'=> $data,
@@ -45,7 +45,7 @@ class ProdSubCatController extends Controller
     public function showOneprodSubCat(Request $request, $id)
     {
         try {
-            $data = ProductsSubCatModel::find($id);
+            $data = SubCatModel::find($id);
         !empty($data)
             ? $ret = response()->json([
                 'data'=> $data,
@@ -69,7 +69,7 @@ class ProdSubCatController extends Controller
     }
 
 
-    public function createprodSubCat(Request $request, ProductsSubCatModel $ProductsSubCatModel)
+    public function createprodSubCat(Request $request, SubCatModel $SubCatModel)
     {
         $val = $this->validate($request,
         [
@@ -97,16 +97,16 @@ class ProdSubCatController extends Controller
 
 
         try{
-            $ProductsSubCatModel = new ProductsSubCatModel;
+            $SubCatModel = new SubCatModel;
 
-            $ProductsSubCatModel->cat_id = $request->cat_id;
-            $ProductsSubCatModel->sub_cat_title = $request->sub_cat_title;
-            $ProductsSubCatModel->sub_cat_desc = $request->sub_cat_desc;
-            $ProductsSubCatModel->sub_cat_image = $image_name;
-            $ProductsSubCatModel->save();
+            $SubCatModel->cat_id = $request->cat_id;
+            $SubCatModel->sub_cat_title = $request->sub_cat_title;
+            $SubCatModel->sub_cat_desc = $request->sub_cat_desc;
+            $SubCatModel->sub_cat_image = $image_name;
+            $SubCatModel->save();
 
             return response()->json([
-                'data' => $ProductsSubCatModel,
+                'data' => $SubCatModel,
                 'msg' => 'New Record created successfully',
                 'statusCode' => 201
             ]);
@@ -134,18 +134,18 @@ class ProdSubCatController extends Controller
             $request->updated_at = Carbon::now()->toDateTimeString();
 
 
-        $ProductsSubCatModel = ProductsSubCatModel::findorFail($id);
+        $SubCatModel = SubCatModel::findorFail($id);
 
-        $ProductsSubCatModel->cat_id = $request->has('cat_id') ? $request->cat_id : $ProductsSubCatModel->cat_id;
-        $ProductsSubCatModel->sub_cat_title = $request->has('sub_cat_title') ? $request->sub_cat_title : $ProductsSubCatModel->sub_cat_title;
-        $ProductsSubCatModel->sub_cat_desc = $request->has('sub_cat_desc') ? $request->sub_cat_desc : $ProductsSubCatModel->sub_cat_desc;
-        $ProductsSubCatModel->sub_cat_image = $request->has('sub_cat_image') ? $request->sub_cat_image : $ProductsSubCatModel->sub_cat_image;
-        $ProductsSubCatModel->save();
+        $SubCatModel->cat_id = $request->has('cat_id') ? $request->cat_id : $SubCatModel->cat_id;
+        $SubCatModel->sub_cat_title = $request->has('sub_cat_title') ? $request->sub_cat_title : $SubCatModel->sub_cat_title;
+        $SubCatModel->sub_cat_desc = $request->has('sub_cat_desc') ? $request->sub_cat_desc : $SubCatModel->sub_cat_desc;
+        $SubCatModel->sub_cat_image = $request->has('sub_cat_image') ? $request->sub_cat_image : $SubCatModel->sub_cat_image;
+        $SubCatModel->save();
 
-        // $ProductsSubCatModel->update($request->all());
+        // $SubCatModel->update($request->all());
 
         return response()->json([
-            'data' => $ProductsSubCatModel,
+            'data' => $SubCatModel,
             'msg' => 'Records updated successfully.',
             'statusCode' => 200]);
         }catch(\Exception $e){
@@ -161,9 +161,9 @@ class ProdSubCatController extends Controller
     public function deleteprodSubCat($id)
     {
 
-        // return $ProductsSubCatModel->ProductCategory();
+        // return $SubCatModel->ProductCategory();
         try {
-            ProductsSubCatModel::findorFail($id)->delete();
+            SubCatModel::findorFail($id)->delete();
             return response()->json([
                 'msg' => 'Deleted successfully!',
                 'statusCode' => 200]);
@@ -178,7 +178,7 @@ class ProdSubCatController extends Controller
 
     public function prodSubCatBelongsTo($id){
         try {
-            $data = ProductsSubCatModel::find($id)->ProductCategory;
+            $data = SubCatModel::find($id)->ProductCategory;
             !empty($data)
             ? $ret = response()->json([
                 'data'=> $data,

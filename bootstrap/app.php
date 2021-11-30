@@ -21,7 +21,7 @@ date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
 
 $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
-);
+); 
 
 $app->withFacades();
 
@@ -82,6 +82,10 @@ $app->instance('path.public', app()->basePath() . DIRECTORY_SEPARATOR . 'public'
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
+    'admin' => \App\Http\Middleware\IsAdminMiddleware::class,
+    'customer' => \App\Http\Middleware\IsCustomerMiddleware::class,
+    'throttle' => App\Http\Middleware\ThrottleRequests::class,
+    'auth.jwt'=>\App\Http\Middleware\JwtMiddleWare::class,
 ]);
 
 /*
@@ -95,10 +99,13 @@ $app->routeMiddleware([
 |
 */
 
-// $app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
-// $app->register(App\Providers\EventServiceProvider::class);
-// $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+$app->register(App\Providers\EventServiceProvider::class);
+$app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+$app->register(Chuckrincon\LumenConfigDiscover\DiscoverServiceProvider::class);
+// $app->register(Tymon\JWTAuth\Provider::class,);
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -118,6 +125,7 @@ $app->router->group([
     require __DIR__.'/../routes/customer.php';
     require __DIR__.'/../routes/driver.php';
     require __DIR__.'/../routes/restaurant.php';
+    require __DIR__.'/../routes/auth.php';
 });
 
 return $app;

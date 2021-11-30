@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSettingsAppInfoTable extends Migration
+class CreateSettingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -26,6 +26,16 @@ class CreateSettingsAppInfoTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::create('settings_app_config', function (Blueprint $table) {
+            $table->id();
+            $table->text('key');
+            $table->text('value');
+
+            $table->timestamps();
+            $table->softDeletes();
+
+        });
     }
 
     /**
@@ -36,5 +46,6 @@ class CreateSettingsAppInfoTable extends Migration
     public function down()
     {
         Schema::dropIfExists('settings_app_info');
+        Schema::dropIfExists('settings_app_config');
     }
 }

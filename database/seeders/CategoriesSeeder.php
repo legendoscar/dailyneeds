@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\CategoryModel;
 use Illuminate\Database\Seeder;
+// use Database\Factories\CategoriesFactory;
 
-class ProductCatSeeder extends Seeder
+class CategoriesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,9 +16,7 @@ class ProductCatSeeder extends Seeder
     public function run()
     {
         //
-        DB::table('products')->insert([
-            'product_title' => 'soup',
-            'product_desc' => 'Soup is good'
-        ]);
+        CategoryModel::factory()->count(1)->create();
+
     }
 }

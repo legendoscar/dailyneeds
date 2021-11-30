@@ -8,7 +8,10 @@
         "php": "^7.3|^8.0",
         "auth0/auth0-php": "^7.9",
         "auth0/login": "^6.4",
+        "chuckrincon/lumen-config-discover": "^1.0",
+        "jzonta/faker-restaurant": "^2.0",
         "laravel/lumen-framework": "^8.0",
+        "laravel/sanctum": "^2.12",
         "tymon/jwt-auth": "dev-develop",
         "willvincent/laravel-rateable": "^2.3"
     },

@@ -7,20 +7,21 @@
 | Application Routes
 |--------------------------------------------------------------------------
 |
-| Here is where we can register all of the routes for restaturants.
+| Here is where you can register all of the routes for the admin.
 | It is a breeze. Simply tell Lumen the URIs it should respond to
 | and give it the Closure to call when that URI is requested.
 |
 */
+use App\Http\Controllers;
 
-$router->group(['prefix' => 'api'], function () use ($router) {
-    $router->get('restaurants',  ['uses' => 'RestaurantController@showAllrestaurants']);
-  
-    $router->get('restaurants/{id}', ['uses' => 'RestaurantController@showOneRestaurant']);
-  
-    $router->post('restaurants', ['uses' => 'RestaurantController@create']);
-  
-    $router->delete('restaurants/{id}', ['uses' => 'RestaurantController@delete']);
-  
-    $router->put('restaurants/{id}', ['uses' => 'RestaurantController@update']);
-  });
+// $router->get('/', function () use ($router) {
+//     return $router->app->version();
+// });
+
+$router->group(['prefix' => 'api/customer', 'middleware' => 'customer'], function ($router) {
+    
+    $router->get('/', function () use ($router) {
+        return 'customer';
+    });
+
+});

@@ -3,25 +3,21 @@
 namespace App\Models;
 
 
+use App\Models\CategoryModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
-Class CategoryModel extends Model {
+Class SubCatModel extends Model {
 
-    use SoftDeletes, HasFactory;
+    use HasFactory, SoftDeletes;
 
-    protected $table = 'categories';
+    protected $table = 'sub_categories';
 
-    protected $fillable = ['cat_title', 'cat_desc', 'cat_type', 'cat_image'];
+    protected $fillable = ['cat_id', 'sub_cat_title', 'sub_cat_desc', 'cat_type', 'sub_cat_image'];
 
-
-    public function subCategory(){
-        // return $this->hasMany('App\Models\SubCatModel', 'cat_id');
-        return 44;
-    }
 
     public function exception($data, $success = 'Records returned successfully.',
     $failed = 'No Record found.'
@@ -52,37 +48,38 @@ Class CategoryModel extends Model {
          }
     }
 
-    public function storeCatGetAll(){ 
+    public function storeSubCatGetAll(){ 
 
         $data = $this->where('cat_type', 1)->get();
-        return $this->exception($data); 
+        return $this->exception($data);
 
     }
 
-    public function productCatGetAll(){
+    public function productSubCatGetAll(){
 
+        /* All the Sub categories */
         $data = $this->where('cat_type', 2)->get();
         return $this->exception($data);
 
     }
 
-    public function getCatSingle($id){
+    public function getSubCatSingle($id){
 
         $data = $this->find($id);
         return $this->exception($data);
     }
 
-    public function createCat(Request $request){
+    public function createSubCat(Request $request){
 
         $image_name = $request->cat_image;
-        if($request->hasFile('cat_image')){
+        if($request->hasFile('sub_cat_image')){
             $image_name = $request->cat_image->getClientOriginalName();
 
             $path = 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
             $destinationPath = app()->basePath($path);
-            $request->file('cat_image')->move($destinationPath, $image_name);
+            $request->file('sub_cat_image')->move($destinationPath, $image_name);
 
-            if($request->file('cat_image')->isValid()){
+            if($request->file('sub_cat_image')->isValid()){
                 return response()->json([
                     'msg' => 'Image upload unsuccessful'
                 ]);
@@ -90,40 +87,40 @@ Class CategoryModel extends Model {
         }
 
         try {
-            $CategoryModel = new CategoryModel;
+            $SubCategoryModel = new SubCatModel;
 
-            $CategoryModel->cat_title = $request->cat_title;
-            $CategoryModel->cat_desc = $request->cat_desc;
-            $CategoryModel->cat_type = $request->cat_type;
-            $CategoryModel->cat_image = $image_name;
-            $CategoryModel->save();
+            $SubCategoryModel->sub_cat_title = $request->sub_cat_title;
+            $SubCategoryModel->sub_cat_desc = $request->sub_cat_desc;
+            $SubCategoryModel->sub_cat_type = $request->sub_cat_type;
+            $SubCategoryModel->sub_cat_image = $image_name;
+            $SubCategoryModel->save();
 
             return response()->json([
-                'data' => $CategoryModel,
-                'msg' => 'New Store category created successfully',
+                'data' => $SubCategoryModel,
+                'msg' => 'New Sub Category created successfully',
                 'statusCode' => 201
             ]);
          }catch(\Exception $e){
             return response()->json([
-                'msg' => 'Store Category creation failed!',
+                'msg' => 'Sub Category creation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
             ]);
         }
     }
 
+
     public function updateCat(Request $request){
 
-        // return 33;
         $image_name = $request->cat_image;
-        if($request->hasFile('cat_image')){
+        if($request->hasFile('sub_cat_image')){
             $image_name = $request->cat_image->getClientOriginalName();
 
             $path = 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
             $destinationPath = app()->basePath($path);
-            $request->file('cat_image')->move($destinationPath, $image_name);
+            $request->file('sub_cat_image')->move($destinationPath, $image_name);
 
-            if($request->file('cat_image')->isValid()){
+            if($request->file('sub_cat_image')->isValid()){
                 return response()->json([
                     'msg' => 'Image upload unsuccessful'
                 ]);
@@ -133,16 +130,16 @@ Class CategoryModel extends Model {
         try {
             $request->updated_at = Carbon::now()->toDateTimeString();
 
-            $CategoryModel = CategoryModel::findorFail($request->id);
+            $SubCategoryModel = SubCatModel::findorFail($request->id);
 
-            $CategoryModel->cat_title = $request->has('cat_title') ? $request->cat_title : $CategoryModel->cat_title;
-            $CategoryModel->cat_desc = $request->has('cat_desc') ? $request->cat_desc : $CategoryModel->cat_desc;
-            $CategoryModel->cat_image = $request->has('cat_image') ? $request->cat_image : $CategoryModel->cat_image;
-            $CategoryModel->cat_type = $request->has('cat_type') ? $request->cat_type : $CategoryModel->cat_type;
-            $CategoryModel->save();
+            $SubCategoryModel->sub_cat_title = $request->has('sub_cat_title') ? $request->sub_cat_title : $SubCategoryModel->sub_cat_title;
+            $SubCategoryModel->sub_cat_desc = $request->has('sub_cat_desc') ? $request->sub_cat_desc : $SubCategoryModel->sub_cat_desc;
+            $SubCategoryModel->sub_cat_image = $request->has('sub_cat_image') ? $request->sub_cat_image : $SubCategoryModel->sub_cat_image;
+            $SubCategoryModel->cat_type = $request->has('cat_type') ? $request->cat_type : $SubCategoryModel->cat_type;
+            $SubCategoryModel->save();
 
             return response()->json([
-                'data' => $CategoryModel,
+                'data' => $SubCategoryModel,
                 'msg' => 'Records updated successfully.',
                 'statusCode' => 200]);
         }
@@ -153,30 +150,12 @@ Class CategoryModel extends Model {
                 'statusCode' => 409
             ]);
         }
-
-
     }
 
-    public function deleteCat($id){ 
 
-        $data = $this->findorFail($id)->delete();
-        return $this->exception($data, $success = 'Delete operation successful!', $failed = 'Delete operation failed! No record found for id: ' . $id . '!');
+    public function ProductCategory(CategoryModel $CategoryModel){
 
-    }
-
-    public function catSub($id){
-        try {
-            $data = $this->find($id)->subCategory;
-            return response()->json([
-                'msg' => 'Sub Category selection successful!',
-                'data' => $data,
-                'statusCode' => 200]);
-        }catch(\Exception $e){
-            return response()->json([
-                'msg' => 'Failed to retrieve data!',
-                'err' => $e->getMessage(),
-                'statusCode' => 409
-            ]);
-        }
+        return $CategoryModel->subCategory();
+        // return CategoryModel::find($id)->subCategory;
     }
 }
