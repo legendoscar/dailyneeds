@@ -36,7 +36,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
 
         
-        //     /* PRODUCT CATEGORIES */
+          /* PRODUCT CATEGORIES */
             $router->get('category/product',  ['uses' => 'CatController@getAllProductCat']); // get all prod cats
             $router->post('category/product', ['uses' => 'CatController@createCat']);
             $router->get('category/product/{id}', ['uses' => 'CatController@getCatSingle']);
@@ -45,6 +45,11 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
 
 
+                /* PRODUCT SUB CATEGORIES */
+            
+                $router->get('product/sub',  ['uses' => 'SubCatController@showAllProductSubCat']); //show all prod sub cat
+                $router->get('product/sub/{id}',  ['uses' => 'SubCatController@getSubCatSingle']); // get single sub category
+                $router->get('product/sub/{id}/cat',  ['uses' => 'SubCatController@getProductCategory']); //get the main cat of a sub
 });
 
 //     $router->get('category/store/{id:[0-9]+}/sub', ['uses' => 'CatController@catSub']); //get the sub of particular store cat
@@ -52,11 +57,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 //     $router->get('category/product/{id:[0-9]+}/sub', ['uses' => 'CatController@getCatSub']); //get the sub of particular prod cat
 
 
-//     /* PRODUCT SUB CATEGORIES */
-
-//     $router->get('product/sub',  ['uses' => 'SubCatController@showAllProductSubCat']); //show all prod sub cat
-//     $router->get('product/sub/{id}',  ['uses' => 'SubCatController@getSubCatSingle']); // get single sub category
-//     $router->get('product/sub/{id}/cat',  ['uses' => 'SubCatController@getProductCategory']); //get the main cat of a sub
 //     // categoy/sub/{id}/cat
 //     // select from cat where id = $id
 //     $router->post('product/sub', ['uses' => 'SubCatController@createSubCat']);

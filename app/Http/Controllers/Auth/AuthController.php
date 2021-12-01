@@ -66,10 +66,12 @@
                 
                 $user->save();
     
+                $this->login($request);
                 return response()->json( [
                             'data' => $user, 
                             'action' => 'create', 
-                            'msg' => $type . ' account created successfully.'
+                            'msg' => $type . ' account created successfully.',
+                             
                 ], 201);
     
             } 
@@ -109,7 +111,11 @@
                 'error' => 'Could not create token'
             ], 500);
         };
-            return $this->respondWithToken($token);
+            return  response()->json([
+                
+                'tokenData' => $this->respondWithToken($token),
+                'userData' => auth()->user()                    
+            ]);
         }
         
          /**
