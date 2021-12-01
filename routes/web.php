@@ -16,13 +16,13 @@ use App\Http\Controllers;
 
 $router->get('/', function () use ($router) {
 return [
-    'API Documentation URL => https://documenter.getpostman.com/view/6959988/UVJeFFxk',
-    'API Server URL => https://dailyneedsng.herokuapp.com/'
-];
+        'API Documentation URL => https://documenter.getpostman.com/view/6959988/UVJeFFxk',
+        'API Server URL => https://dailyneedsng.herokuapp.com/'
+    ];
+});
 
 $router->group(['prefix' => 'api'], function () use ($router) {
 
-});
     
     $router->get('user/profile', ['uses' => 'UserProfileController@profile']);
 
@@ -33,28 +33,30 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->get('category/store/{id:[0-9]+}', ['uses' => 'CatController@getCatSingle']);
         $router->put('category/store/{id}', ['uses' => 'CatController@updateCat']);
         $router->delete('category/store/{id:[0-9]+}', ['uses' => 'CatController@deleteCatPerm']);
+        $router->get('category/store/{id:[0-9]+}/sub', ['uses' => 'CatController@catSub']); //get the sub of particular store cat
 
 
         
-          /* PRODUCT CATEGORIES */
-            $router->get('category/product',  ['uses' => 'CatController@getAllProductCat']); // get all prod cats
-            $router->post('category/product', ['uses' => 'CatController@createCat']);
-            $router->get('category/product/{id}', ['uses' => 'CatController@getCatSingle']);
-            $router->put('category/product/{id}', ['uses' => 'CatController@updateCat']);
-            $router->delete('category/product/{id:[0-9]+}', ['uses' => 'CatController@deleteCat']);
+        /* PRODUCT CATEGORIES */
+        $router->get('category/product',  ['uses' => 'CatController@getAllProductCat']); // get all prod cats
+        $router->post('category/product', ['uses' => 'CatController@createCat']);
+        $router->get('category/product/{id}', ['uses' => 'CatController@getCatSingle']);
+        $router->put('category/product/{id}', ['uses' => 'CatController@updateCat']);
+        $router->delete('category/product/{id:[0-9]+}', ['uses' => 'CatController@deleteCat']);
+        $router->get('category/product/{id:[0-9]+}/sub', ['uses' => 'CatController@getCatSub']); //get the subCat of single prod cat
 
 
+        
+        /* PRODUCT SUB CATEGORIES */
+    
+        // $router->get('product/sub',  ['uses' => 'SubCatController@showAllProductSubCat']); //show all prod sub cat
+        $router->get('product/sub/{id}',  ['uses' => 'SubCatController@getSubCatSingle']); // get single sub category
+        $router->get('product/sub/{id}/cat',  ['uses' => 'SubCatController@getProductCategory']); //get the main cat of a sub
 
-                /* PRODUCT SUB CATEGORIES */
-            
-                $router->get('product/sub',  ['uses' => 'SubCatController@showAllProductSubCat']); //show all prod sub cat
-                $router->get('product/sub/{id}',  ['uses' => 'SubCatController@getSubCatSingle']); // get single sub category
-                $router->get('product/sub/{id}/cat',  ['uses' => 'SubCatController@getProductCategory']); //get the main cat of a sub
-});
+        });
+// });
 
-//     $router->get('category/store/{id:[0-9]+}/sub', ['uses' => 'CatController@catSub']); //get the sub of particular store cat
 
-//     $router->get('category/product/{id:[0-9]+}/sub', ['uses' => 'CatController@getCatSub']); //get the sub of particular prod cat
 
 
 //     // categoy/sub/{id}/cat
@@ -87,11 +89,12 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 //   });
 
 
-    // $router->get('prodcat',  ['uses' => 'ProdCatController@showAllProdCat']);
-    // $router->get('prodcat/{id:[0-9]+}', ['uses' => 'ProdCatController@showOneProdCat']);
-    // $router->get('prodcat/{id:[0-9]+}/sub', ['uses' => 'ProdCatController@prodCatHas']);
-    // $router->post('prodcat', ['uses' => 'ProdCatController@createProdCat']);
-    // $router->put('prodcat/{id}', ['uses' => 'ProdCatController@updateProdCat']);
-    // $router->delete('prodcat/{id:[0-9]+}', ['uses' => 'ProdCatController@deleteProdCat']);
+// $router->get('prodcat',  ['uses' => 'ProdCatController@showAllProdCat']);
+// $router->get('prodcat/{id:[0-9]+}', ['uses' => 'ProdCatController@showOneProdCat']);
+// $router->get('prodcat/{id:[0-9]+}/sub', ['uses' => 'ProdCatController@prodCatHas']);
+// $router->post('prodcat', ['uses' => 'ProdCatController@createProdCat']);
+// $router->put('prodcat/{id}', ['uses' => 'ProdCatController@updateProdCat']);
+// $router->delete('prodcat/{id:[0-9]+}', ['uses' => 'ProdCatController@deleteProdCat']);
+
 
 

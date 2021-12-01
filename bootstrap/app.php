@@ -86,6 +86,8 @@ $app->routeMiddleware([
     'customer' => \App\Http\Middleware\IsCustomerMiddleware::class,
     'throttle' => App\Http\Middleware\ThrottleRequests::class,
     'auth.jwt'=>\App\Http\Middleware\JwtMiddleWare::class,
+    'storeCanCreate'=>\App\Http\Middleware\CanCreateStoreMiddleware::class,
+    'store'=>\App\Http\Middleware\IsStoreMiddleware::class,
 ]);
 
 /*

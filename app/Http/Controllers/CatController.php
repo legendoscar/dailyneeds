@@ -120,7 +120,7 @@ class CatController extends Controller
     public function getCatSub(Request $request, CategoryModel $CategoryModel){
 
         $id = $request->id;
-        return $CategoryModel->catSub($id);
+        return $CategoryModel->catSub($id); 
 
 
     }

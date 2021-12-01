@@ -15,7 +15,7 @@ class CreateStoresTable extends Migration
     {
         Schema::create('locations', function (Blueprint $table) { #getting literal locations like, Works, Amakohia
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            // $table->unsignedBigInteger('user_id');
             $table->string('name');
             $table->string('desc');
             $table->string('location_country_name');
@@ -34,24 +34,24 @@ class CreateStoresTable extends Migration
 
         Schema::create('stores', function (Blueprint $table) { #stores include pharmacy & losgistics
             $table->id();
-            $table->string('store_name');
+            $table->string('store_name')->unique();
             $table->unsignedBigInteger('store_cat_id');
-            $table->unsignedBigInteger('store_location_id');
+            $table->unsignedBigInteger('store_location_id')->nullable();
             $table->string('store_address')->nullable();
             $table->string('store_phone')->unique();
             $table->string('store_email')->unique();
             $table->string('store_image')->nullable();
             $table->string('store_about')->nullable(); 
-            $table->string('store_password');
+            $table->string('password');
             $table->string('CAC_document')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamp('phone_verified_at')->nullable();
             $table->enum('verification_status', [0,1])->default(0); # 0=>unverified   1=>verified
-            $table->enum('status', ['active', 'suspended', 'deactivated'])->default('active');
+            $table->boolean('status')->default(true);
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('store_cat_id')->references('id')->on('sub_categories');
+            $table->foreign('store_cat_id')->references('id')->on('categories');
             $table->foreign('store_location_id')->references('id')->on('locations');
         });
 

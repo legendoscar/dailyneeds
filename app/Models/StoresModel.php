@@ -12,12 +12,14 @@ use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-Class StoresModel extends Model implements AuthenticatableContract, AuthorizableContract{
+Class StoresModel extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject {
 
     use Authenticatable, Authorizable, HasFactory;
     use SoftDeletes;
     protected $table = 'stores';
+    protected $guard = 'store';
 
  /**
      * The attributes that are mass assignable.
@@ -34,10 +36,32 @@ Class StoresModel extends Model implements AuthenticatableContract, Authorizable
      * @var array
      */
     protected $hidden = [
-        'store_password',
+        'password', 'rememberToken'
     ];
 
 
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+    
      /**
      * Get products of stores.
      *
@@ -102,7 +126,7 @@ Class StoresModel extends Model implements AuthenticatableContract, Authorizable
         $store->store_address = $request->store_address;
         $store->store_phone = $request->store_phone;
         $store->store_email = $request->store_email;
-        $store->store_password = $request->store_password;
+        $store->password = $request->password;
         $store->store_cat_id = $request->store_cat_id;
 
 
@@ -152,7 +176,7 @@ Class StoresModel extends Model implements AuthenticatableContract, Authorizable
             $StoreModel->store_email = $request->has('store_email') ? $request->store_email : $StoreModel->store_email;
             $StoreModel->store_image = $request->has('store_image') ? $request->store_image : $StoreModel->store_image;
             $StoreModel->store_about = $request->has('store_about') ? $request->store_about : $StoreModel->store_about;
-            $StoreModel->store_password = $request->has('store_password') ? $request->store_password : $StoreModel->store_password;
+            $StoreModel->password = $request->has('password') ? $request->password : $StoreModel->password;
             $StoreModel->verification_status = $request->has('verification_status') ? $request->verification_status : $StoreModel->verification_status;
             $StoreModel->status = $request->has('status') ? $request->status : $StoreModel->status;
             $StoreModel->save();

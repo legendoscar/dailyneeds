@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CategoryModel;
 use App\Models\SubCatModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -21,7 +22,7 @@ class SubCatController extends Controller
 
     }
 
-    public function showAllProductSubCat(SubCatModel $SubCatModel)
+    public function showAllProductSubCat(SubCatModel $SubCatModel) 
     {
         //id=2
         return $SubCatModel->productSubCatGetAll();
@@ -80,10 +81,15 @@ class SubCatController extends Controller
         return $SubCatModel->storeCatDeleteOne($id);
     }
 
-    public function getProductCategory(Request $request, SubCatModel $SubCatModel){
+    public function getProductCategory(Request $request, SubCatModel $SubCatModel)
+    {
 
-        // $id = $request->id;
-        return $SubCatModel->ProductCategory($request->id);
+        
+        $id = $request->all();
+    //     return $model = $CategoryModel->find($id);
+    //    $id = $CategoryModel->find($id)->id;
+    //     // return $id = $SubCatModel->findOrFail($request->id);
+        return $SubCatModel->ProductCategory($id);
 
 
     }

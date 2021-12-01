@@ -29,8 +29,9 @@ $router->group(['prefix' => 'api/auth'], function () use ($router) {
     
     $router->post('register/admin',  ['uses' => 'Auth\AuthController@registerUser']);
     $router->post('register/customer',  ['uses' => 'Auth\AuthController@registerUser']);
-    // $router->post('register/store',  ['uses' => 'Auth\AuthController@registerStore']);
-
+    
+    $router->post('register/store',  ['uses' => 'Auth\StoreAuthController@registerStore']);
+    $router->post('login/store',  ['uses' => 'Auth\StoreAuthController@loginStore']);
 
     $router->post('login',  ['uses' => 'Auth\AuthController@login']);
     $router->get('logout',  ['uses' => 'Auth\AuthController@logout']);

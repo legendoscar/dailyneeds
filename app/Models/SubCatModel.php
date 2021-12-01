@@ -16,7 +16,7 @@ Class SubCatModel extends Model {
 
     protected $table = 'sub_categories';
 
-    protected $fillable = ['cat_id', 'sub_cat_title', 'sub_cat_desc', 'cat_type', 'sub_cat_image'];
+    protected $fillable = ['cat_id', 'sub_cat_title', 'sub_cat_desc', 'cat_type', 'sub_cat_image']; 
 
 
     public function exception($data, $success = 'Records returned successfully.',
@@ -153,9 +153,21 @@ Class SubCatModel extends Model {
     }
 
 
-    public function ProductCategory(CategoryModel $CategoryModel){
+    public function ProductCategory($id){
 
-        return $CategoryModel->subCategory();
-        // return CategoryModel::find($id)->subCategory;
+        return $id;
+        try {
+            $data = $this->find($id)    ->maincategory();
+            return response()->json([
+                'data' => $data,
+                'msg' => 'Sub Category selection successful!',
+                'statusCode' => 200]);
+        }catch(\Exception $e){
+            return response()->json([
+                'msg' => 'Failed to retrieve data!',
+                'err' => $e->getMessage(),
+                'statusCode' => 409
+            ]);
+        }
     }
 }

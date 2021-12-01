@@ -17,25 +17,29 @@
             'driver' => 'jwt',
             'provider' => 'admins',
         ],
-        'customer' => [
+        'user' => [
             'driver' => 'jwt',
-            'provider' => 'customer',
+            'provider' => 'users',
+        ],
+        'store' => [
+            'driver' => 'jwt',
+            'provider' => 'stores',
         ],
     ],
 
     'providers' => [
         
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => \App\Models\User::class
-        ],        
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
-        'customer' => [
+        'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+        'stores' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\StoresModel::class,
         ],
     ],
 

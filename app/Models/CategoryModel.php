@@ -19,8 +19,13 @@ Class CategoryModel extends Model {
 
 
     public function subCategory(){
-        // return $this->hasMany('App\Models\SubCatModel', 'cat_id');
-        return 44;
+        return $this->hasMany('App\Models\SubCatModel', 'cat_id');
+        // return 44;
+    }
+    
+    public function mainCategory(){
+        return $this->hasOne('App\Models\CategoryModel'); 
+        // return 44;
     }
 
     public function exception($data, $success = 'Records returned successfully.',
@@ -204,8 +209,8 @@ Class CategoryModel extends Model {
         try {
             $data = $this->find($id)->subCategory;
             return response()->json([
-                'msg' => 'Sub Category selection successful!',
                 'data' => $data,
+                'msg' => 'Sub Category selection successful!',
                 'statusCode' => 200]);
         }catch(\Exception $e){
             return response()->json([
