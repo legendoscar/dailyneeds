@@ -19,7 +19,7 @@
     
         public function __construct()
         {
-            $this->middleware('auth:api', ['except' => ['login','registerAdmin']]);
+            $this->middleware('auth:api', ['except' => ['login','registerUser']]);
         }
     
         /**
@@ -37,6 +37,7 @@
                 'email' => 'required|bail|email|unique:users',
                 'phone' => 'required|bail|numeric|unique:users',
                 'password' => 'required|bail|min:6|confirmed',
+                'profile_picture' => 'file'
             ]);
     
             try 
@@ -199,7 +200,7 @@
      * Log the user out (Invalidate the token).
      *
      * @return \Illuminate\Http\JsonResponse
-     */
+     */ 
     public function logout()
     {
         auth()->logout();

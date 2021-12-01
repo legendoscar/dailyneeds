@@ -18,10 +18,10 @@ use App\Http\Controllers;
 //     return $router->app->version();
 // });
 
-$router->group(['prefix' => 'api/customer', 'middleware' => 'customer'], function ($router) {
+$router->group(['prefix' => 'api/customer', 'middleware' => 'store'], function ($router) {
     
     $router->get('/', function () use ($router) {
-        return 'customer';
+        return 'store';
     });
 
 });

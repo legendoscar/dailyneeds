@@ -83,7 +83,7 @@ Class CategoryModel extends Model {
             $request->file('cat_image')->move($destinationPath, $image_name);
 
             if($request->file('cat_image')->isValid()){
-                return response()->json([
+                return response()->json([ 
                     'msg' => 'Image upload unsuccessful'
                 ]);
             }
@@ -96,16 +96,28 @@ Class CategoryModel extends Model {
             $CategoryModel->cat_desc = $request->cat_desc;
             $CategoryModel->cat_type = $request->cat_type;
             $CategoryModel->cat_image = $image_name;
+
+            if($request->getRequestUri() == '/api/category/store/') {
+                $CategoryModel->cat_type = 1;
+                $type = 'Store';
+            }
+           else{
+                $CategoryModel->cat_type = 2;
+                $type = 'Product';
+           }
+
+
+
             $CategoryModel->save();
 
             return response()->json([
                 'data' => $CategoryModel,
-                'msg' => 'New Store category created successfully',
+                'msg' => 'New '. $type. ' category created successfully',
                 'statusCode' => 201
             ]);
          }catch(\Exception $e){
             return response()->json([
-                'msg' => 'Store Category creation failed!',
+                'msg' => 'Store '. $type . 'Category creation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
             ]);
@@ -139,16 +151,27 @@ Class CategoryModel extends Model {
             $CategoryModel->cat_desc = $request->has('cat_desc') ? $request->cat_desc : $CategoryModel->cat_desc;
             $CategoryModel->cat_image = $request->has('cat_image') ? $request->cat_image : $CategoryModel->cat_image;
             $CategoryModel->cat_type = $request->has('cat_type') ? $request->cat_type : $CategoryModel->cat_type;
+
+
+            if($request->getRequestUri() == '/api/category/store/') {
+                // $CategoryModel->cat_type = 1;
+                $type = 'Store';
+            }
+           else{
+                // $CategoryModel->cat_type = 2;
+                $type = 'Product';
+           }
+
             $CategoryModel->save();
 
             return response()->json([
                 'data' => $CategoryModel,
-                'msg' => 'Records updated successfully.',
+                'msg' => $type . ' updated successfully.',
                 'statusCode' => 200]);
         }
         catch(\Exception $e){
             return response()->json([
-                'msg' => 'Update operation failed!',
+                'msg' => $type . ' update operation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
             ]);
@@ -157,11 +180,24 @@ Class CategoryModel extends Model {
 
     }
 
-    public function deleteCat($id){ 
+    public function deleteCat($id){ #trash
 
         $data = $this->findorFail($id)->delete();
+        return $this->exception($data, $success = 'Category moved to recycle bin.', $failed = 'Delete operation failed! No record found for id: ' . $id . '!');
+
+    }
+    
+    public function deleteCatPerm($id){ #delete permanenetly
+
+        $data = $this->findorFail($id)->forceDelete();
         return $this->exception($data, $success = 'Delete operation successful!', $failed = 'Delete operation failed! No record found for id: ' . $id . '!');
 
+    }
+
+    public function getTrashed($id){ #get thrashed items
+
+        $data = $this->find($id);
+        return $this->exception($data);
     }
 
     public function catSub($id){

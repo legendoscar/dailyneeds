@@ -124,7 +124,7 @@ $app->router->group([
     require __DIR__.'/../routes/admin.php';
     require __DIR__.'/../routes/customer.php';
     require __DIR__.'/../routes/driver.php';
-    require __DIR__.'/../routes/restaurant.php';
+    require __DIR__.'/../routes/store.php';
     require __DIR__.'/../routes/auth.php';
 });
 

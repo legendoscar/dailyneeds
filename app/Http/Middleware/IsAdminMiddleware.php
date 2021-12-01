@@ -16,13 +16,8 @@ class IsAdminMiddleware
     public function handle($request, Closure $next)
     {
 
-        if(!auth()->user()){
-            return response()->json([
-                'msg' => 'Unauthorized! Log in with your credentials', 
-                'errCode' => 401 
-            ]);
-        }
-        elseif(auth()->user() && auth()->user()->user_role == 1){
+        if(auth()->user() && auth()->user()->user_role == 1){
+            
             return $next($request);
         }
 

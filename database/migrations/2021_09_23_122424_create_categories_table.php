@@ -18,7 +18,7 @@ class CreateCategoriesTable extends Migration
             $table->id();
             $table->string('cat_title')->unique();
             $table->string('cat_desc')->nullable();
-            $table->enum('cat_type', [1, 2, 3]);   #1=>store  # 2=>product
+            $table->enum('cat_type', [1, 2, 3]);   #1=>store  # 2=>product 
             $table->string('cat_image')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();

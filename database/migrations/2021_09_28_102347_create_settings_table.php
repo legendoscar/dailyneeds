@@ -15,12 +15,12 @@ class CreateSettingsTable extends Migration
     {
         Schema::create('settings_app_info', function (Blueprint $table) {
             $table->id();
-            $table->text('app_title')->default('Daily Needs');
+            $table->text('app_title');
             $table->text('app_sub_title')->nullable();
             $table->text('app_desc')->nullable();
-            $table->text('app_website')->default('https://www.dailyneeds.com.ng');
-            $table->text('app_email')->default('ordernow@dailyneeds.com.ng');
-            $table->text('app_phone')->default('+234-806-470-9889');
+            $table->text('app_website');
+            $table->text('app_email');
+            $table->text('app_phone');
             $table->text('app_address')->nullable();
             $table->text('app_logo')->nullable();
             $table->timestamps();

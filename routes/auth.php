@@ -14,22 +14,22 @@
 */
 use App\Http\Controllers;
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
-});
+// $router->get('/', function () use ($router) {
+//     return $router->app->version();
+// });
 
 $router->group(['prefix' => 'api'], function ($router) 
 {
     $router->get('me', ['uses' => 'Auth\AuthController@me']);
 });
-
+ 
 
 $router->group(['prefix' => 'api/auth'], function () use ($router) {
 
     
     $router->post('register/admin',  ['uses' => 'Auth\AuthController@registerUser']);
     $router->post('register/customer',  ['uses' => 'Auth\AuthController@registerUser']);
-    $router->post('register/store',  ['uses' => 'Auth\AuthController@registerStore']);
+    // $router->post('register/store',  ['uses' => 'Auth\AuthController@registerStore']);
 
 
     $router->post('login',  ['uses' => 'Auth\AuthController@login']);

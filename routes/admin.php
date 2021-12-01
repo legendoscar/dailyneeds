@@ -17,8 +17,16 @@ use App\Http\Controllers;
 
 $router->group(['prefix' => 'api/admin', 'middleware' => ['auth', 'admin']], function ($router) {
     
-    $router->get('/', function () use ($router) {
-        return 'admin';
-    });
+    // $router->get('/', function () use ($router) {
+    //     return 'admin';
+    // });
+
+    $router->get('profile', ['uses' => 'Auth\AuthController@me']);
+
+    // /createOne
+    // /getAll
+    // /getOne
+    // /updateOne
+    // /DeleteOne
 
 });

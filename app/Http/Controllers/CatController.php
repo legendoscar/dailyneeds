@@ -8,7 +8,14 @@ use Illuminate\Support\Facades\Validator;
 
 class CatController extends Controller
 {
-    /**
+    public function __construct()
+    {
+        // $this->middleware('auth:api', ['except' => ['getAllStoreCat','getCatSingle']]);
+        $this->middleware('admin', ['only' => ['createCat','updateCat', 'deleteCat', 'deleteCatPerm']]);
+    }
+
+
+    /** 
      * Create a new controller instance.
      *
      * @return void
@@ -16,6 +23,7 @@ class CatController extends Controller
 
     public function getAllStoreCat(CategoryModel $CategoryModel)
     {
+        // return 33;
         return $CategoryModel->storeCatGetAll();
 
     }
@@ -40,7 +48,7 @@ class CatController extends Controller
         $rules = [
             'cat_title' => 'bail|required|unique:categories|string',
             'cat_desc' => 'bail|string',
-            'cat_type' => 'bail|numeric|required',
+            'cat_type' => 'bail|numeric',
             'cat_image' => 'bail|file',
         ];
 
@@ -55,7 +63,7 @@ class CatController extends Controller
 
         $CategoryModel = new CategoryModel;
 
-        return $CategoryModel->createCat ($request);
+        return $CategoryModel->createCat($request);
 
     }
 
@@ -82,10 +90,24 @@ class CatController extends Controller
     }
 
 
-    public function deleteCat(Request $request, CategoryModel $CategoryModel)
+    public function deleteCat(Request $request, CategoryModel $CategoryModel) #recycle bin
     {
         $id = $request->id;
         return $CategoryModel->deleteCat($id);
+    }
+    
+    
+    public function deleteCatPerm(Request $request, CategoryModel $CategoryModel) #delete permanently
+    {
+        $id = $request->id;
+        return $CategoryModel->deleteCatPerm($id);
+    }
+
+
+    public function getTrashed(Request $request, CategoryModel $CategoryModel) #retrieve only thrashed items
+    {
+
+        return $CategoryModel->getCatSingle($request->id);
     }
 
 

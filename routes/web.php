@@ -14,49 +14,41 @@
 */
 use App\Http\Controllers;
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
-});
-
-$router->group(['prefix' => 'api'], function ($router) 
-{
-    $router->get('me', ['uses' => 'Auth\AuthController@me']);
-});
-
 
 $router->group(['prefix' => 'api'], function () use ($router) {
 
+    $router->get('/', function () use ($router) {
+    return [
+        'API Documentation URL => https://documenter.getpostman.com/view/6959988/UVJeFFxk',
+        'API Server URL => https://dailyneedsng.herokuapp.com/'
+    ];
+});
     
+    $router->get('user/profile', ['uses' => 'UserProfileController@profile']);
 
-    /* AUTH LINKS */
-    // $router->get('login/admin',  ['uses' => 'Auth\LoginController@adminLogin']);
-    // $router->get('me',  ['middleware' => 'auth:api', 'uses' => 'Auth\AuthController@me']);
-    $router->post('register/user',  ['uses' => 'Auth\AuthController@register']);
-    $router->post('login/user',  ['uses' => 'Auth\AuthController@login']);
-    $router->get('logout/user',  ['uses' => 'Auth\AuthController@logout']);
-    // $router->post('/login/customer',  ['uses' => 'Auth\LoginController@custLogin']);
-    // $router->post('/register/admin',  ['uses' => 'Auth\RegisterController@createAdmin']);
-    // $router->post('/register/customer',  ['uses' => 'Auth\RegisterController@createCustomer']);
+    
+    //     /* STORE CATEGORIES */
+        $router->get('category/store',  ['uses' => 'CatController@getAllStoreCat']);
+        $router->post('category/store', ['uses' => 'CatController@createCat']);
+        $router->get('category/store/{id:[0-9]+}', ['uses' => 'CatController@getCatSingle']);
+        $router->put('category/store/{id}', ['uses' => 'CatController@updateCat']);
+        $router->delete('category/store/{id:[0-9]+}', ['uses' => 'CatController@deleteCatPerm']);
+
+
+        
+        //     /* PRODUCT CATEGORIES */
+            $router->get('category/product',  ['uses' => 'CatController@getAllProductCat']); // get all prod cats
+            $router->post('category/product', ['uses' => 'CatController@createCat']);
+            $router->get('category/product/{id}', ['uses' => 'CatController@getCatSingle']);
+            $router->put('category/product/{id}', ['uses' => 'CatController@updateCat']);
+            $router->delete('category/product/{id:[0-9]+}', ['uses' => 'CatController@deleteCat']);
+
 
 
 });
 
-
-//     /* STORE CATEGORIES */
-//     $router->get('category/store',  ['uses' => 'CatController@getAllStoreCat']);
-//     $router->get('category/store/{id:[0-9]+}', ['uses' => 'CatController@getCatSingle']);
-//     $router->post('category/store', ['uses' => 'CatController@createCat']);
-//     $router->put('category/store/{id}', ['uses' => 'CatController@updateCat']);
-//     $router->delete('category/store/{id:[0-9]+}', ['uses' => 'CatController@deleteCat']);
 //     $router->get('category/store/{id:[0-9]+}/sub', ['uses' => 'CatController@catSub']); //get the sub of particular store cat
 
-
-//     /* PRODUCT CATEGORIES */
-//     $router->get('category/product',  ['uses' => 'CatController@getAllProductCat']); // get all prod cats
-//     $router->get('category/product/{id}', ['uses' => 'CatController@getCatSingle']);
-//     $router->post('category/product', ['uses' => 'CatController@createCat']);
-//     $router->put('category/product/{id}', ['uses' => 'CatController@updateCat']);
-//     $router->delete('category/product/{id:[0-9]+}', ['uses' => 'CatController@deleteCat']);
 //     $router->get('category/product/{id:[0-9]+}/sub', ['uses' => 'CatController@getCatSub']); //get the sub of particular prod cat
 
 
