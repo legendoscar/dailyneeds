@@ -14,14 +14,14 @@
 */
 use App\Http\Controllers;
 
+$router->get('/', function () use ($router) {
+return [
+    'API Documentation URL => https://documenter.getpostman.com/view/6959988/UVJeFFxk',
+    'API Server URL => https://dailyneedsng.herokuapp.com/'
+];
 
 $router->group(['prefix' => 'api'], function () use ($router) {
 
-    $router->get('/', function () use ($router) {
-    return [
-        'API Documentation URL => https://documenter.getpostman.com/view/6959988/UVJeFFxk',
-        'API Server URL => https://dailyneedsng.herokuapp.com/'
-    ];
 });
     
     $router->get('user/profile', ['uses' => 'UserProfileController@profile']);
