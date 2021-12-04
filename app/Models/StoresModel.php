@@ -13,6 +13,7 @@ use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Facades\Hash;
 
 Class StoresModel extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject {
 
@@ -61,7 +62,7 @@ Class StoresModel extends Model implements AuthenticatableContract, Authorizable
         return [];
     }
 
-    
+
      /**
      * Get products of stores.
      *
@@ -117,33 +118,35 @@ Class StoresModel extends Model implements AuthenticatableContract, Authorizable
         return $this->exception($data);
     }
 
-    public function createStore(Request $request){
+    public function registerStore(Request $request){
 
-        try {
-        $store = new StoresModel;
-
-        $store->store_name = $request->store_name;
-        $store->store_address = $request->store_address;
-        $store->store_phone = $request->store_phone;
-        $store->store_email = $request->store_email;
-        $store->password = $request->password;
-        $store->store_cat_id = $request->store_cat_id;
-
-
-        $store->save();
-
-        return response()->json([
-            'data' => $store,
-            'msg' => 'New Store created successfully',
-            'statusCode' => 201
-        ]);
-        }catch(\Exception $e){
-            return response()->json([
-                'msg' => 'Store creation failed!',
-                'err' => $e->getMessage(),
-                'statusCode' => 409
-            ]);
-        }
+        try 
+            {
+                $store = new StoresModel();
+                $store->store_name= $request->input('store_name');
+                $store->store_cat_id= $request->input('store_cat_id');
+                $store->store_location_id= $request->input('store_location_id');
+                $store->store_phone= $request->input('store_phone');
+                $store->store_email= $request->input('store_email');
+                $store->password = Hash::make($request->input('password')); 
+                $type = 'Store';
+                
+                $store->save();
+                return response()->json( [
+                            'data' => $store, 
+                            'action' => 'create', 
+                            'msg' => $type . ' account created successfully.',                             
+                ], 201);
+    
+            } 
+            catch (\Exception $e) 
+            {
+                return response()->json( [
+                           'action' => 'create', 
+                           'err' => $e->getMessage(),
+                           'msg' => $type . ' account creation failed'
+                ], 409);
+            }
     }
 
     public function updateStore(Request $request){

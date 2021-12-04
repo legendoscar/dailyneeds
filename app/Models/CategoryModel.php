@@ -27,7 +27,7 @@ Class CategoryModel extends Model {
         return $this->hasOne('App\Models\CategoryModel'); 
         // return 44;
     }
-
+ 
     public function exception($data, $success = 'Records returned successfully.',
     $failed = 'No Record found.'
     ){
@@ -60,7 +60,7 @@ Class CategoryModel extends Model {
     public function storeCatGetAll(){ 
 
         $data = $this->where('cat_type', 1)->get();
-        return $this->exception($data); 
+        return $this->exception($data);  
 
     }
 

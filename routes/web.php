@@ -53,6 +53,14 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->get('product/sub/{id}',  ['uses' => 'SubCatController@getSubCatSingle']); // get single sub category
         $router->get('product/sub/{id}/cat',  ['uses' => 'SubCatController@getProductCategory']); //get the main cat of a sub
 
+
+        $router->get('product',  ['uses' => 'ProductsController@showAllProducts']);
+        $router->get('product/{id:[0-9]+}', ['uses' => 'ProductsController@showOneproduct']);
+        $router->post('product', ['uses' => 'ProductsController@createProduct']);
+        // $router->put('product/{id}', ['uses' => 'ProductsController@updateproduct']);
+        // $router->get('product/{id:[0-9]+}/cat', ['uses' => 'ProductsController@ProductBelongsTo']);
+        // $router->delete('product/{id:[0-9]+}', ['uses' => 'ProductsController@deleteProduct']);
+
         });
 // });
 

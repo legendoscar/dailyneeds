@@ -4,11 +4,10 @@
     
     use App\Models\StoresModel;
     use App\Http\Controllers\Controller;
-    use Illuminate\Support\Facades\Hash;
     use Illuminate\Http\Request;
     use Illuminate\Http\Response;
     use Tymon\JWTAuth\Exceptions\JWTException;
-
+    use Illuminate\Support\Facades\Validator;
     class StoreAuthController extends Controller
     {
 
@@ -22,6 +21,17 @@
         }
 
 
+        public function validateRequest(Request $request, $rules){
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'errorMsg' => $validator->errors(), 
+                    'statusCode' => 422
+                ]);
+             };
+        }
         
          /**
          * Create a new store account.
@@ -30,11 +40,11 @@
          * @return Response
          */	 
 
-         public function registerStore(Request $request)
+         public function registerStore(Request $request, StoresModel $StoresModel)
         {
-            // return 33;
+            
             //validate incoming request 
-            $this->validate($request, [
+            $rules = [
                 'store_name' => 'required|bail|string|unique:stores,store_name',
                 'store_cat_id' => 'required|bail|integer|exists:categories,id',
                 'store_location_id' => 'bail|integer|exists:locations,id',
@@ -42,35 +52,22 @@
                 'store_phone' => 'required|bail|numeric|unique:users,phone|unique:stores,store_phone',
                 'password' => 'required|bail|min:6|confirmed',
        
-            ]);
+            ];
+
+            // return $this->validateRequest($request, $rules);
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'errorMsg' => $validator->errors(), 
+                    'statusCode' => 422
+                ]);
+             };
     
-            try 
-            {
-                $store = new StoresModel();
-                $store->store_name= $request->input('store_name');
-                $store->store_cat_id= $request->input('store_cat_id');
-                $store->store_location_id= $request->input('store_location_id');
-                $store->store_phone= $request->input('store_phone');
-                $store->store_email= $request->input('store_email');
-                $store->password = Hash::make($request->input('password')); 
-                $type = 'Store';
-                
-                $store->save();
-                return response()->json( [
-                            'data' => $store, 
-                            'action' => 'create', 
-                            'msg' => $type . ' account created successfully.',                             
-                ], 201);
-    
-            } 
-            catch (\Exception $e) 
-            {
-                return response()->json( [
-                           'action' => 'create', 
-                           'err' => $e->getMessage(),
-                           'msg' => $type . ' account creation failed'
-                ], 409);
-            }
+            
+            $StoresModel = new $StoresModel;
+            return $StoresModel->registerStore($request);
+            
         }
 
         
@@ -83,11 +80,21 @@
         public function loginStore(Request $request)
         {
               //validate incoming request 
-            $this->validate($request, [
+            $rules = [
                 'store_email' => 'required|string',
                 'password' => 'required|string',
-            ]);
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'errorMsg' => $validator->errors(), 
+                    'statusCode' => 422
+                ]);
+             };
     
+             $type = 'Store';
             $credentials = $request->only(['store_email', 'password']);
     
             try{
@@ -101,12 +108,22 @@
                 'error' => 'Could not create token'
             ], 500);
         };
+         $user = json_encode(auth()->guard('store')->user());
+         $token = json_encode($this->respondWithToken($token));
+         $data = [];
+
+         $data[] = json_decode($user, true);
+         $data[] = json_decode($token, true);
+
             return  response()->json([
                 
-                'tokenData' => $this->respondWithToken($token),
-                'userData' => auth()->guard('store')->user()                    
+                'statusCode' => 200,                    
+                'msg' =>  $type . ' Login Success',                    
+                'userData' => $data,
             ]);
         }
+
+        
         
          /**
          * Get user details.
