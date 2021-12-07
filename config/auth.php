@@ -25,6 +25,7 @@
             'driver' => 'jwt',
             'provider' => 'stores',
         ],
+        
     ],
 
     'providers' => [

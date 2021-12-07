@@ -16,7 +16,7 @@ class IsStoreMiddleware
     public function handle($request, Closure $next, $guard = 'store')
     {
 
-        if (!auth()->guard($guard)->check()) {
+        if (!auth()->guard($guard)) {
             // return redirect('/');
             return response()->json([
                 'msg' => 'Forbidden! You don\'t have store access', 

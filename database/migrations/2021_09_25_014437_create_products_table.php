@@ -17,7 +17,7 @@ class CreateProductsTable extends Migration
             $table->id('id'); 
             $table->unsignedBigInteger('prod_cat_id');
             $table->unsignedBigInteger('store_id')->nullable();
-            $table->string('product_title')->unique();
+            $table->string('product_title');
             $table->string('product_sub_title')->nullable();
             $table->text('product_desc')->nullable();
             $table->enum('unit', ['plate', 'wrap', 'kg', 'liter', 'morsel'])->default('plate');

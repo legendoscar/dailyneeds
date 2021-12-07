@@ -55,11 +55,11 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
 
         $router->get('product',  ['uses' => 'ProductsController@showAllProducts']);
-        $router->get('product/{id:[0-9]+}', ['uses' => 'ProductsController@showOneproduct']);
+        $router->get('product/{id:[0-9]+}', ['uses' => 'ProductsController@showOneProduct']);
         $router->post('product', ['uses' => 'ProductsController@createProduct']);
-        // $router->put('product/{id}', ['uses' => 'ProductsController@updateproduct']);
+        $router->put('product/{id}', ['uses' => 'ProductsController@updateproduct']);
         // $router->get('product/{id:[0-9]+}/cat', ['uses' => 'ProductsController@ProductBelongsTo']);
-        // $router->delete('product/{id:[0-9]+}', ['uses' => 'ProductsController@deleteProduct']);
+        $router->delete('product/{id:[0-9]+}', ['uses' => 'ProductsController@deleteProduct']);
 
         });
 // });

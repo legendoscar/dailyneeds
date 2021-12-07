@@ -2,166 +2,109 @@
 
 namespace App\Http\Controllers;
 
-// use App\Models\ProductsCatModel;
+// use App\Models\;
 use App\Models\ProductsModel;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
-class ProductsController extends Controller
+class ProductsController extends Controller 
 {
+
+    public function __construct()
+    {
+        $this->middleware('store', ['except' => ['showAllProducts','showOneProduct']]);
+        // $this->middleware('auth:user', ['except' => ['showAllProducts','showOneProduct']]);
+        // $this->middleware('admin', ['only' => ['createCat','updateCat', 'deleteCat', 'deleteCatPerm']]);
+    }
+
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
 
-    public function showAllProducts()
-    {
+    public function showAllProducts(ProductsModel $ProductsModel)
+    { 
 
-       try {
-           return response()->json([
-            'data' => ProductsModel::all(),
-            'statusCode' => 200,
-            'msg' => 'Records returned successfully.'
-        ]);
-        }catch(\Exception $e){
-            return response()->json([
-                'msg' => 'No record found!',
-                'err' => $e->getMessage(),
-                'statusCode' => 409
-            ]);
-        }
+       return $ProductsModel->productGetAll();
     }
 
 
-    public function showOneProduct(Request $request, $id)
+    public function showOneProduct(Request $request, ProductsModel $ProductsModel)
     {
-        try {
-        $data = ProductsModel::find($id);
-        !empty($data)
-            ? $ret = response()->json([
-                'data'=> $data,
-                'msg' => 'Record returned successfully.',
-                'statusCode' => 200
-            ])
-            : $ret = response()->json([
-            'msg' => 'No Record found.',
-            'statusCode' => 404
-        ]);
-
-        return $ret;
-
-        }catch(\Exception $e){
-            return response()->json([
-                'msg' => 'Ooops! Error encountered!',
-                'err' => $e->getMessage(),
-                'statusCode' => 409
-            ]);
-        }
+        return $ProductsModel->showOneProduct($request->id);
     }
 
 
     public function createProduct(Request $request, ProductsModel $ProductsModel)
-    {
+    {          
+        if(auth()->guard('store')){
 
-        $ProductsModel = new ProductsModel;
-        $this->validate($request,
-        [
-            'cat_id' => 'bail|required|numeric|exists:prod_sub_cat,id',
-            'product_title' => 'bail|required|unique:products|string',
-            'product_desc' => 'bail|string',
-            'product_image' => 'bail|file',
-            'availability_status' => 'bail|string',
-            'amount' => 'numeric'
-            // prod_sub_cat
-        ]);
+            $rules = [
+                'prod_cat_id' => 'bail|required|numeric|exists:sub_categories,id',
+                'store_id' => 'bail|required|numeric|exists:stores,id',
+                'product_title' => 'bail|required|string',
+                'product_sub_title' => 'bail|string',
+                'product_desc' => 'bail|string',
+                'unit' => 'bail|string',
+                'price' => 'bail|required|regex:/^\d+(\.\d{1,2})?$/',
+                'product_banner_img' => 'bail|file',
+                'product_code' => 'bail|string',
+            ];
 
-        $image_name = $request->product_image;
-        if($request->hasFile('product_image')){
-            $file = $request->product_image;
-            $image_name = $request->product_image->getClientOriginalName();
+            $validator = Validator::make($request->all(), $rules);
 
-            $path = 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
-            $destinationPath = app()->basePath($path);
-            $request->file('product_image')->move($destinationPath, $image_name);
-
-            if(!$request->file('product_image')->isValid()){
+            if ($validator->fails()) {
                 return response()->json([
-                    'msg' => 'Image upload not successful'
+                    'errorMsg' => $validator->errors(), 
+                    'statusCode' => 422
                 ]);
-            }
+            };        
+            return $ProductsModel->createProduct($request);
         }
-
-
-        try{
-            $ProductsModel = new ProductsModel;
-
-            $ProductsModel->cat_id = $request->cat_id;
-            $ProductsModel->product_title = $request->product_title;
-            $ProductsModel->product_desc = $request->product_desc;
-            $ProductsModel->availability_status = $request->availability_status;
-            $ProductsModel->availability_status = $request->availability_status;
-            $ProductsModel->unit = $request->unit;
-            $ProductsModel->product_image = $image_name;
-            $ProductsModel->amount = $request->amount;
-            $ProductsModel->save();
-
-            return response()->json([
-                'data' => $ProductsModel,
-                'msg' => 'New Record created successfully',
-                'statusCode' => 201
-            ]);
-        } catch(\Exception $e){
-            return response()->json([
-                'msg' => 'Product creation failed!',
-                'err' => $e->getMessage(),
-                'statusCode' => 409
-            ]);
-        }
+    
+        return response()->json([
+            'msg' => 'Forbidden! Not allowed to create products!',
+            'statusCode' => 409
+        ]);
     }
 
 
-    public function updateProduct($id, Request $request)
+    public function updateProduct(Request $request, ProductsModel $ProductsModel)
     {
 
-        // return $request->cat_title;
-        $this->validate($request,
-        [
-            'cat_id' => 'bail|numeric|exists:prod_sub_cat,id',
-            'product_title' => 'bail|unique:products|string',
+        $rules = [
+            'prod_cat_id' => 'bail|numeric|exists:sub_categories,id',
+            'store_id' => 'bail|numeric|exists:stores,id',
+            'product_title' => 'bail|string',
+            'product_sub_title' => 'bail|string',
             'product_desc' => 'bail|string',
-            'product_image' => 'bail',
-            'availability_status' => 'bail|string',
-            'amount' => 'numeric'
-        ]);
+            'unit' => 'bail|string',
+            'product_banner_img' => 'bail|file',
+            'product_code' => 'bail|string',
+            'price' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
+            'old_price' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
+            'is_available' => 'bail|integer',
+            'is_new' => 'bail|integer',
+            'is_popular' => 'bail|integer',
+            'is_recommended' => 'bail|integer',
+        ];
 
-        try {
-            $request->updated_at = Carbon::now()->toDateTimeString();
+        $validator = Validator::make($request->all(), $rules);
 
-
-        $ProductsModel = ProductsModel::findorFail($id);
-
-        $ProductsModel->cat_id = $request->has('cat_id') ? $request->cat_id : $ProductsModel->cat_id;
-        $ProductsModel->product_title = $request->has('product_title') ? $request->product_title : $ProductsModel->product_title;
-        $ProductsModel->product_sub_title = $request->has('product_sub_title') ? $request->product_sub_title : $ProductsModel->product_sub_title;
-        $ProductsModel->product_desc = $request->has('product_desc') ? $request->product_desc : $ProductsModel->product_desc;
-        $ProductsModel->availability_status = $request->has('availability_status') ? $request->availability_status : $ProductsModel->availability_status;
-        $ProductsModel->product_image = $request->has('product_image') ? $request->product_image : $ProductsModel->product_image;
-        $ProductsModel->save();
-
-        // $ProductsModel->update($request->all());
-
-        return response()->json([
-            'data' => $ProductsModel,
-            'msg' => 'Records updated successfully.',
-            'statusCode' => 200]);
-        }catch(\Exception $e){
+        if ($validator->fails()) {
             return response()->json([
-                'msg' => 'Update operation failed!',
-                'err' => $e->getMessage(),
-                'statusCode' => 409
+                'errorMsg' => $validator->errors(), 
+                'statusCode' => 422
             ]);
-        }
+         };
+
+         return $request->all();
+
+         return $ProductsModel->updateProduct($request);
+
+       
     }
 
 
