@@ -24,7 +24,7 @@ class CreateProductsTable extends Migration
             $table->string('product_banner_img')->nullable();
             $table->string('product_images')->nullable();
             $table->string('product_code')->nullable();
-            $table->float('price', 8, 2)->default('0.00');
+            $table->float('product_price', 8, 2)->default('0.00');
             $table->float('old_price', 8, 2)->default('0.00')->nullable();
             $table->boolean('is_available')->nullable()->default(true);
             $table->boolean('is_new')->nullable()->default(true);

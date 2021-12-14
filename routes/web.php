@@ -58,8 +58,24 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->get('product/{id:[0-9]+}', ['uses' => 'ProductsController@showOneProduct']);
         $router->post('product', ['uses' => 'ProductsController@createProduct']);
         $router->put('product/{id}', ['uses' => 'ProductsController@updateproduct']);
-        // $router->get('product/{id:[0-9]+}/cat', ['uses' => 'ProductsController@ProductBelongsTo']);
+        $router->get('product/{id:[0-9]+}/cat', ['uses' => 'ProductsController@ProductBelongsTo']);
         $router->delete('product/{id:[0-9]+}', ['uses' => 'ProductsController@deleteProduct']);
+        
+        
+        /* ORDER ITEMS */
+        $router->get('orderitem',  ['uses' => 'OrderItemsController@showAllOrderItems']);
+        $router->get('orderitem/{id:[0-9]+}', ['uses' => 'OrderItemsController@showOneOrderItem']);
+        $router->post('orderitem', ['uses' => 'OrderItemsController@createOrderItem']);
+        $router->delete('orderitem/{id:[0-9]+}', ['uses' => 'OrderItemsController@deleteOrderItem']);
+        $router->put('orderitem/{id}', ['uses' => 'OrderItemsController@updateOrderItem']);
+       
+       
+        /* ORDERS */
+        $router->get('order',  ['uses' => 'OrdersController@showAllOrders']);
+        $router->get('order/{id:[0-9]+}', ['uses' => 'OrdersController@showOneOrder']);
+        // $router->post('product', ['uses' => 'ProductsController@createProduct']);
+        // $router->put('product/{id}', ['uses' => 'ProductsController@updateproduct']);
+        // // $router->get('product/{id:[0-9]+}/cat', ['uses' => 'ProductsController@ProductBelongsTo']);
 
         });
 // });

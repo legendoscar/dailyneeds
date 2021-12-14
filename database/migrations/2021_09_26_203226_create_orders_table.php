@@ -17,7 +17,7 @@ class CreateOrdersTable extends Migration
         Schema::create('location_fare', function (Blueprint $table) { #fare from one point to another
             $table->id();
             $table->unsignedBigInteger('from');
-            $table->unsignedBigInteger('to');
+            $table->unsignedBigInteger('to'); 
             $table->float('fare');
             $table->float('old_fare')->nullable();
 
@@ -73,7 +73,7 @@ class CreateOrdersTable extends Migration
             $table->boolean('is_repeat')->default(false);
             $table->integer('repeat_count')->default(0);
 
-            $table->rememberToken();
+            $table->rememberToken(); 
             $table->timestamps();
             $table->softDeletes();
 
@@ -91,7 +91,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('product_id');
             $table->unsignedInteger('quantity')->default(1);
-            $table->float('price', 8, 2)->unsigned();
+            $table->float('amount', 8, 2)->unsigned();
 
             $table->rememberToken();
             $table->timestamps();

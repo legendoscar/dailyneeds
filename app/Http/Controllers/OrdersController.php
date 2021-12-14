@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-// use App\Models\;
-use App\Models\ProductsModel;
+use App\Models\OrdersModel;
+// use App\Models\OrdersModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class ProductsController extends Controller 
+class OrdersController extends Controller 
 {
 
     public function __construct()
     {
-        $this->middleware('store', ['except' => [
-            // 'showAllProducts',
-            'showOneProduct']]);
+        $this->middleware('admin', ['except' => [
+            // 'showAllOrders',
+             'showOneOrder']]);
         // $this->middleware('auth:user', ['except' => ['showAllProducts','showOneProduct']]);
         // $this->middleware('admin', ['only' => ['createCat','updateCat', 'deleteCat', 'deleteCatPerm']]);
     }
@@ -26,20 +26,20 @@ class ProductsController extends Controller
      * @return void
      */
 
-    public function showAllProducts(ProductsModel $ProductsModel)
+    public function showAllOrders(OrdersModel $OrdersModel)
     { 
 
-       return $ProductsModel->productGetAll();
+       return $OrdersModel->orderGetAll();
     }
 
 
-    public function showOneProduct(Request $request, ProductsModel $ProductsModel)
+    public function showOneOrder(Request $request, OrdersModel $OrdersModel)
     {
-        return $ProductsModel->showOneProduct($request->id);
+        return $OrdersModel->showOneOrder($request->id);
     }
 
 
-    public function createProduct(Request $request, ProductsModel $ProductsModel)
+    public function createProduct(Request $request, OrdersModel $OrdersModel)
     {          
         if(auth()->guard('store')){
 
@@ -63,7 +63,7 @@ class ProductsController extends Controller
                     'statusCode' => 422
                 ]);
             };        
-            return $ProductsModel->createProduct($request);
+            return $OrdersModel->createProduct($request);
         }
     
         return response()->json([
@@ -73,7 +73,7 @@ class ProductsController extends Controller
     }
 
 
-    public function updateProduct(Request $request, ProductsModel $ProductsModel)
+    public function updateProduct(Request $request, OrdersModel $OrdersModel)
     {
 
         $rules = [
@@ -104,7 +104,7 @@ class ProductsController extends Controller
 
          return $request->all();
 
-         return $ProductsModel->updateProduct($request);
+         return $OrdersModel->updateProduct($request);
 
        
     }
@@ -113,9 +113,9 @@ class ProductsController extends Controller
     public function deleteProduct($id)
     {
 
-        // return $ProductsModel->ProductCategory();
+        // return $OrdersModel->ProductCategory();
         try {
-            ProductsModel::findorFail($id)->delete();
+            OrdersModel::findorFail($id)->delete();
             return response()->json([
                 'msg' => 'Deleted successfully!',
                 'statusCode' => 200]);
@@ -130,7 +130,7 @@ class ProductsController extends Controller
 
     public function ProductBelongsTo($id){
         try {
-            $data = ProductsModel::find($id)->ProductsCategory;
+            $data = OrdersModel::find($id)->ProductsCategory;
             return response()->json([
                 'msg' => 'Category selection successful!',
                 'data' => $data,
@@ -143,25 +143,6 @@ class ProductsController extends Controller
             ]);
         }
     }
-    
-    
-    // public function ProductBelongsToStore($id){
-    //     try {
-    //         $data = ProductsModel->
-    //         where('store_id', auth()->user()->id);
-    //         // ProductsCategory;
-    //         return response()->json([
-    //             'msg' => 'Category selection successful!',
-    //             'data' => $data,
-    //             'statusCode' => 200]);
-    //     }catch(\Exception $e){
-    //         return response()->json([
-    //             'msg' => 'Failed to retrieve data!',
-    //             'err' => $e->getMessage(),
-    //             'statusCode' => 409
-    //         ]);
-    //     }
-    // }
 
     //
 }
