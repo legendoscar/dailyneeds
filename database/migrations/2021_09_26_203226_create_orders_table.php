@@ -51,7 +51,7 @@ class CreateOrdersTable extends Migration
             $table->enum('payment_status', ['processing', 'confirmed', 'declined', 'cancelled', 'returned'])->default('processing');
             $table->float('cash_change_amount', 8, 2)->unsigned()->nullable();
 
-            $table->dateTime('time_order_accepted')->nullable();
+            $table->dateTime('time_order_accepted')->nullable(); 
             $table->dateTime('time_order_assigned')->nullable();
             $table->text('store_schedule_order_reason')->nullable(); #reasons to schedule order
             $table->dateTime('store_schedule_order_time')->nullable(); #expected delivery time

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,9 +16,13 @@ Class OrdersModel extends Model {
 
     protected $table = 'orders';
 
-    protected $fillable = ['prod_cat_id', 'store_id', 'product_title', 'product_sub_title', 
-    'product_desc', 'unit', 'product_banner_img', 'product_images' , 'product_code', 'price', 'old_price', 
-    'is_available', 'is_new', 'is_popular', 'is_recommended'
+    protected $fillable = ['user_id', 'store_id', 'driver_id', 'order_code', 'kitchen_instructions', 'location',
+    'destination_address', 'tax_charge', 'store_charge', 'delivery_charge', 'total_amount', 'delivery_mode',
+    'payment_mode', 'payment_status', 'cash_change_amount', 'time_order_accepted', 'time_order_assigned',
+    'store_schedule_order_reason', 'store_schedule_order_time', 'store_cancel_reason', 'store_decline_cancel_time',
+    'time_driver_accepted_delivery', 'user_schedule_order_reason', 'user_schedule_order_time', 'user_decline_cancel_reason',
+    'user_decline_cancel_time', 'time_order_processing', 'time_order_in_transit', 'time_order_delivered', 'is_complete',
+    'is_repeat', 'repeat_count'
 ]; 
 
      public function OrderItems(){
@@ -56,7 +61,8 @@ Class OrdersModel extends Model {
 
         try {
             return response()->json([
-             'data' => $this->all(),
+             'data' => $this->join('order_items', 'orders.id', '=', 'order_items.order_id')
+             ->get(),
              'statusCode' => 200,
              'msg' => 'Records returned successfully.'
          ]);
@@ -71,7 +77,9 @@ Class OrdersModel extends Model {
 
     public function showOneOrder($id){
         try {
-            $data = $this->findOrFail($id); 
+            $data = $this
+            ->leftJoin('order_items', 'orders.id', '=', 'order_items.order_id')
+            ->get();  
             !empty($data)
                 ? $ret = response()->json([
                     'data'=> $data,
@@ -94,41 +102,62 @@ Class OrdersModel extends Model {
             }
     }
 
-    public function createProduct(Request $request){
+    function generateOrderCodeNumber() {
+        // return substr('hello', 1,-1);
+        // return substr(
+        //     uniqid(mt_rand(1000000000, 9999999999)),
+        //      1, -1
+        // );
+        $number = mt_rand(1000000000, 9999999999); // better than rand()
+    
+        // call the same function if the barcode exists already
+        if ($this->ordercodeNumberExists($number)) {
+            return $this->generateOrderCodeNumber();
+        }
+    
+        // otherwise, it's valid and can be used
+        return $number;
+    }
+    
+    function ordercodeNumberExists($number) {
+        // query the database and return a boolean
+        // for instance, it might look like this in Laravel
+        return OrdersModel::whereOrderCode($number)->exists();
+    }
+
+
+    public function createOrder(Request $request){
         try{
 
-            $image_name = $request->product_banner_img;
-        if($request->hasFile('product_banner_img')){
-            // $file = $request->product_banner_img;
-            $image_name = $request->product_banner_img->getClientOriginalName();
+            // return $request->all();
+            // DB::transaction(function () {
+                $OrdersModel = new OrdersModel;
 
-            $path = 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
-            $destinationPath = app()->basePath($path);
-            $request->file('product_banner_img')->move($destinationPath, $image_name);
+                $OrdersModel->user_id = $request->user_id;
+                $OrdersModel->store_id = $request->store_id;
+                $OrdersModel->order_code = $this->generateOrderCodeNumber();
+                $OrdersModel->kitchen_instructions = $request->kitchen_instructions;
+                $OrdersModel->location = $request->location;
+                $OrdersModel->destination_address = $request->destination_address;
 
-            // if(!$request->file('product_banner_img')->isValid()){
-            //     return response()->json([
-            //         'msg' => 'Image upload not successful'
-            //     ]);
-            // }
-        }
-            $ProductsModel = new ProductsModel;
+                $OrdersModel->total_amount = $request->total_amount;
 
-            $ProductsModel->prod_cat_id = $request->prod_cat_id;
-            $ProductsModel->store_id = $request->store_id;
-            $ProductsModel->product_title = $request->product_title;
-            $ProductsModel->product_sub_title = $request->product_sub_title;
-            $ProductsModel->product_desc = $request->product_desc;
-            $ProductsModel->unit = $request->unit;
-            $ProductsModel->product_banner_img = $image_name;
-            $ProductsModel->price = $request->price;
-            $ProductsModel->save();
 
-            return response()->json([
-                'data' => $ProductsModel,
-                'msg' => 'New Product created successfully',
-                'statusCode' => 201
-            ]);
+                // $OrdersModel->product_banner_img = $image_name;
+                // $OrdersModel->price = $request->price;
+                $OrdersModel->save();
+
+                $last_id = $OrdersModel->id;
+
+                $OrderItemsModel = new OrderItemsModel;
+                $OrderItemsModel->createOrderItem($request, $last_id);
+
+                return response()->json([
+                    'data' => $OrdersModel,
+                    'msg' => 'New Order created successfully',
+                    'statusCode' => 201
+                ]);
+            // });
         } catch(\Exception $e){
             return response()->json([
                 'msg' => 'Product creation failed!',
@@ -146,29 +175,29 @@ Class OrdersModel extends Model {
             $request->updated_at = Carbon::now()->toDateTimeString();
 
 
-            $ProductsModel = ProductsModel::findorFail($request->id);
+            $OrdersModel = OrdersModel::findorFail($request->id);
 
-            $ProductsModel->prod_cat_id = $request->filled('prod_cat_id') ? $request->prod_cat_id : $ProductsModel->prod_cat_id;
-            $ProductsModel->product_title = $request->filled('product_title') ? $request->product_title : $ProductsModel->product_title;
-            $ProductsModel->product_sub_title = $request->filled('product_sub_title') ? $request->product_sub_title : $ProductsModel->product_sub_title;
-            $ProductsModel->product_desc = $request->filled('product_desc') ? $request->product_desc : $ProductsModel->product_desc;
-            $ProductsModel->unit = $request->filled('unit') ? $request->unit : $ProductsModel->unit;
-            $ProductsModel->product_banner_img = $request->filled('product_banner_img') ? $request->product_banner_img : $ProductsModel->product_banner_img;
-            $ProductsModel->product_code = $request->filled('product_code') ? $request->product_code : $ProductsModel->product_code;
-            $ProductsModel->price = $request->filled('price') ? $request->price : $ProductsModel->price;
-            $ProductsModel->old_price = $request->filled('old_price') ? $request->old_price : $ProductsModel->old_price;
-            $ProductsModel->is_available = $request->filled('is_available') ? $request->is_available : $ProductsModel->is_available;
-            $ProductsModel->is_new = $request->filled('is_new') ? $request->is_new : $ProductsModel->is_new;
-            $ProductsModel->is_popular = $request->filled('is_popular') ? $request->is_popular : $ProductsModel->is_popular;
-            $ProductsModel->is_recommended = $request->filled('is_recommended') ? $request->is_recommended : $ProductsModel->is_recommended;
+            $OrdersModel->prod_cat_id = $request->filled('prod_cat_id') ? $request->prod_cat_id : $OrdersModel->prod_cat_id;
+            $OrdersModel->product_title = $request->filled('product_title') ? $request->product_title : $OrdersModel->product_title;
+            $OrdersModel->product_sub_title = $request->filled('product_sub_title') ? $request->product_sub_title : $OrdersModel->product_sub_title;
+            $OrdersModel->product_desc = $request->filled('product_desc') ? $request->product_desc : $OrdersModel->product_desc;
+            $OrdersModel->unit = $request->filled('unit') ? $request->unit : $OrdersModel->unit;
+            $OrdersModel->product_banner_img = $request->filled('product_banner_img') ? $request->product_banner_img : $OrdersModel->product_banner_img;
+            $OrdersModel->product_code = $request->filled('product_code') ? $request->product_code : $OrdersModel->product_code;
+            $OrdersModel->price = $request->filled('price') ? $request->price : $OrdersModel->price;
+            $OrdersModel->old_price = $request->filled('old_price') ? $request->old_price : $OrdersModel->old_price;
+            $OrdersModel->is_available = $request->filled('is_available') ? $request->is_available : $OrdersModel->is_available;
+            $OrdersModel->is_new = $request->filled('is_new') ? $request->is_new : $OrdersModel->is_new;
+            $OrdersModel->is_popular = $request->filled('is_popular') ? $request->is_popular : $OrdersModel->is_popular;
+            $OrdersModel->is_recommended = $request->filled('is_recommended') ? $request->is_recommended : $OrdersModel->is_recommended;
 
             // return $request->all();
-            $ProductsModel->save();
+            $OrdersModel->save();
 
-            // $ProductsModel->update($request->all());
+            // $OrdersModel->update($request->all());
 
             return response()->json([
-                'data' => $ProductsModel,
+                'data' => $OrdersModel,
                 'msg' => 'Product updated successfully.',
                 'statusCode' => 200]);
             }catch(\Exception $e){
@@ -178,5 +207,13 @@ Class OrdersModel extends Model {
                     'statusCode' => 409
             ]);
         }
+    }
+    public function deleteOrder($id){
+
+        // return 33;
+
+        $data = $this->findorFail($id)->delete();
+        return $this->exception($data, $success = 'Delete operation successful!', $failed = 'Delete operation failed! No record found for id: ' . $id . '!');
+
     }
 }

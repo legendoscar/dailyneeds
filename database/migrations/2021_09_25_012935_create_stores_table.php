@@ -16,8 +16,8 @@ class CreateStoresTable extends Migration
         Schema::create('locations', function (Blueprint $table) { #getting literal locations like, Works, Amakohia
             $table->id();
             // $table->unsignedBigInteger('user_id');
-            $table->string('name');
-            $table->string('desc');
+            $table->string('name')->unique();
+            $table->string('desc'); 
             $table->string('location_country_name');
             $table->string('location_country_code');
 

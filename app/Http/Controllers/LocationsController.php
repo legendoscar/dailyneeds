@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\OrderItemsModel;
+use App\Models\LocationsModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class OrderItemsController extends Controller 
+class LocationsController extends Controller 
 {
 
     public function __construct()
     {
         $this->middleware('admin', ['only' => [
+            'createLocation',
+            'deleteLocation',
+            'updateLocation',
             // 'showAllOrderItems',
             //  'showOneOrderItem', 
             //  'deleteOrderItem'
@@ -27,28 +30,31 @@ class OrderItemsController extends Controller
      * @return void
      */
 
-    public function showAllOrderItems(OrderItemsModel $OrderItemsModel)
+    public function showAllLocations(LocationsModel $LocationsModel)
     { 
 
-       return $OrderItemsModel->orderItemsGetAll();
+       return $LocationsModel->showAllLocations();
     }
 
 
-    public function showOneOrderItem(Request $request, OrderItemsModel $OrderItemsModel)
+    public function showOneLocation(Request $request, LocationsModel $LocationsModel)
     {
-        return $OrderItemsModel->showOneOrderItem($request->id);
+        return $LocationsModel->showOneLocation($request->id);
     }
 
 
-    public function createOrderItem(Request $request, OrderItemsModel $OrderItemsModel)
+    public function createLocation(Request $request, LocationsModel $LocationsModel)
     {          
         // if(auth()->guard('store')){
 
             $rules = [
-                'order_id' => 'bail|exists:orders,id',
-                'product_id' => 'bail|numeric|exists:products,id',
-                'amount' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
-                'quantity' => 'bail|integer',
+                'name' => 'bail|string|required|unique:locations,name',
+                'desc' => 'bail|string',
+                'location_country_name' => 'bail|string',
+                'location_country_code' => 'bail|string',
+                'is_popular' => 'bail|boolean',
+                'is_recommended' => 'bail|boolean',
+                'is_active' => 'bail|boolean',
             ];
     
             $validator = Validator::make($request->all(), $rules);
@@ -60,7 +66,7 @@ class OrderItemsController extends Controller
                 ]);
              };
 
-            return $OrderItemsModel->createOrderItem($request);
+            return $LocationsModel->createLocation($request);
         // }
     
         // return response()->json([
@@ -70,14 +76,17 @@ class OrderItemsController extends Controller
     }
 
 
-    public function updateOrderItem(Request $request, OrderItemsModel $OrderItemsModel)
+    public function updateLocation(Request $request, LocationsModel $LocationsModel)
     {
 
         $rules = [
-            'order_id' => 'bail|numeric|exists:orders,id',
-            'product_id' => 'bail|numeric|exists:products,id',
-            'amount' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
-            'quantity' => 'bail|integer',
+            'name' => 'bail|string|required|unique:locations,name',
+            'desc' => 'bail|string',
+            'location_country_name' => 'bail|string',
+            'location_country_code' => 'bail|string',
+            'is_popular' => 'bail|boolean',
+            'is_recommended' => 'bail|boolean',
+            'is_active' => 'bail|boolean',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -91,33 +100,22 @@ class OrderItemsController extends Controller
 
         //  return $request->all();
 
-         return $OrderItemsModel->updateOrderItem($request);
+         return $LocationsModel->updateLocation($request);
 
        
     }
 
 
-    public function deleteOrderItem($id)
+    public function deleteLocation(Request $request, LocationsModel $LocationsModel)
     {
 
-        // return $OrderItemsModel->ProductCategory();
-        try {
-            OrderItemsModel::findorFail($id)->delete();
-            return response()->json([
-                'msg' => 'Deleted successfully!',
-                'statusCode' => 200]);
-            }catch(\Exception $e){
-                return response()->json([
-                    'msg' => 'Delete operation failed!',
-                    'err' => $e->getMessage(),
-                    'statusCode' => 409
-                ]);
-        }
+        return $LocationsModel->deleteLocation($request->id);
+        
     }
 
     public function ProductBelongsTo($id){
         try {
-            $data = OrderItemsModel::find($id)->ProductsCategory;
+            $data = LocationsModel::find($id)->ProductsCategory;
             return response()->json([
                 'msg' => 'Category selection successful!',
                 'data' => $data,

@@ -12,9 +12,9 @@ class OrdersController extends Controller
 
     public function __construct()
     {
-        $this->middleware('admin', ['except' => [
-            // 'showAllOrders',
-             'showOneOrder']]);
+        // $this->middleware('admin', ['except' => [
+        //     'showAllOrders',
+        //      'showOneOrder']]);
         // $this->middleware('auth:user', ['except' => ['showAllProducts','showOneProduct']]);
         // $this->middleware('admin', ['only' => ['createCat','updateCat', 'deleteCat', 'deleteCatPerm']]);
     }
@@ -39,20 +39,31 @@ class OrdersController extends Controller
     }
 
 
-    public function createProduct(Request $request, OrdersModel $OrdersModel)
+    public function createOrder(Request $request, OrdersModel $OrdersModel)
     {          
-        if(auth()->guard('store')){
+        // if(auth()->guard('store')){
+            // return $request->all();
 
             $rules = [
-                'prod_cat_id' => 'bail|required|numeric|exists:sub_categories,id',
+                'user_id' => 'bail|required|numeric|exists:users,id',
                 'store_id' => 'bail|required|numeric|exists:stores,id',
-                'product_title' => 'bail|required|string',
-                'product_sub_title' => 'bail|string',
-                'product_desc' => 'bail|string',
-                'unit' => 'bail|string',
-                'price' => 'bail|required|regex:/^\d+(\.\d{1,2})?$/',
-                'product_banner_img' => 'bail|file',
-                'product_code' => 'bail|string',
+                // 'driver_id' => 'bail|required|numeric|exists:driver_details,id',
+                // 'order_code' => 'bail|required|string|min:6|unique:orders,order_code',
+                'kitchen_instructions' => 'bail|string',
+                'location' => 'bail|required|numeric|exists:locations,id',
+                'destination_address' => 'bail|required|numeric|exists:user_address,id',
+                'tax_charge' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
+                'store_charge' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
+                'delivery_charge' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
+                'cash_change_amount' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
+                'total_amount' => 'bail|required|regex:/^\d+(\.\d{1,2})?$/',
+                'delivery_mode' => 'bail|string|in:pick-up,delivery',
+                'payment_mode' => 'bail|string|in:cash,transfer,card,pos',
+
+                // 'order_id' => 'bail|exists:orders,id',
+                'product_id' => 'bail|numeric|exists:products,id',
+                'amount' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
+                'quantity' => 'bail|integer',
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -63,8 +74,10 @@ class OrdersController extends Controller
                     'statusCode' => 422
                 ]);
             };        
-            return $OrdersModel->createProduct($request);
-        }
+            // return 'passed';
+            // return $OrdersModel->generateBarcodeNumber();
+            return $OrdersModel->createOrder($request);
+        // }
     
         return response()->json([
             'msg' => 'Forbidden! Not allowed to create products!',
@@ -144,5 +157,21 @@ class OrdersController extends Controller
         }
     }
 
-    //
+    public function deleteOrder($id)
+    {
+
+        // return $OrderItemsModel->ProductCategory();
+        try {
+            OrdersModel::findorFail($id)->delete();
+            return response()->json([
+                'msg' => 'Deleted successfully!',
+                'statusCode' => 200]);
+            }catch(\Exception $e){
+                return response()->json([
+                    'msg' => 'Delete operation failed!',
+                    'err' => $e->getMessage(),
+                    'statusCode' => 409
+                ]);
+        }
+    }
 }

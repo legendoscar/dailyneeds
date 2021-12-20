@@ -78,7 +78,7 @@ class CreateUsersTable extends Migration
         });
 
 
-        Schema::create('driver_details', function (Blueprint $table) { #driver details
+        Schema::create('driver_details', function (Blueprint $table) { #driver details 
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('vehicle_number')->unique();

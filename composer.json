@@ -13,6 +13,7 @@
         "laravel/lumen-framework": "^8.0",
         "laravel/sanctum": "^2.12",
         "tymon/jwt-auth": "dev-develop",
+        "unicodeveloper/laravel-paystack": "^1.0",
         "willvincent/laravel-rateable": "^2.3"
     },
     "require-dev": {

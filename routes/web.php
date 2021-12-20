@@ -62,18 +62,27 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->delete('product/{id:[0-9]+}', ['uses' => 'ProductsController@deleteProduct']);
         
         
+        /* LOCATIONS */
+        $router->get('location',  ['uses' => 'LocationsController@showAllLocations']);
+        $router->get('location/{id:[0-9]+}', ['uses' => 'LocationsController@showOneLocation']);
+        $router->post('location', ['uses' => 'LocationsController@createLocation']);
+        $router->delete('location/{id:[0-9]+}', ['uses' => 'LocationsController@deleteLocation']);
+        $router->put('location/{id}', ['uses' => 'LocationsController@updateLocation']);
+        
+        
         /* ORDER ITEMS */
         $router->get('orderitem',  ['uses' => 'OrderItemsController@showAllOrderItems']);
         $router->get('orderitem/{id:[0-9]+}', ['uses' => 'OrderItemsController@showOneOrderItem']);
         $router->post('orderitem', ['uses' => 'OrderItemsController@createOrderItem']);
         $router->delete('orderitem/{id:[0-9]+}', ['uses' => 'OrderItemsController@deleteOrderItem']);
         $router->put('orderitem/{id}', ['uses' => 'OrderItemsController@updateOrderItem']);
-       
-       
+        
+        
         /* ORDERS */
         $router->get('order',  ['uses' => 'OrdersController@showAllOrders']);
         $router->get('order/{id:[0-9]+}', ['uses' => 'OrdersController@showOneOrder']);
-        // $router->post('product', ['uses' => 'ProductsController@createProduct']);
+        $router->post('order', ['uses' => 'OrdersController@createOrder']);
+        $router->delete('order/{id:[0-9]+}', ['uses' => 'OrdersController@deleteOrder']);
         // $router->put('product/{id}', ['uses' => 'ProductsController@updateproduct']);
         // // $router->get('product/{id:[0-9]+}/cat', ['uses' => 'ProductsController@ProductBelongsTo']);
 

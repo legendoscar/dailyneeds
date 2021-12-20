@@ -95,24 +95,35 @@ Class OrderItemsModel extends Model {
             }
     }
 
-    public function createOrderItem(Request $request){
+    public function createOrderItem(Request $request, $last_id){
+        // return count($request->items);
+        // return $request->all();
         try{
             
-            foreach($request->all() as $items=>$item){
-
-                return $item;
-
+            // foreach($request->all() as $item){
                 $OrderItemsModel = new OrderItemsModel;
-                $OrderItemsModel->order_id = $request->order_id;
-                $OrderItemsModel->product_id = $request->product_id;
-                $OrderItemsModel->quantity = $request->quantity;
-                $OrderItemsModel->amount = $request->amount;
-                $OrderItemsModel->save  ();
-            }
+                
+               $count = count($request->items);
+                for ($i=0; $i < $count; $i++) {
+               
+                    // return $request->items[0];
+                    
+                    $data = [
+                            'order_id' => $last_id, 
+                            'product_id' => $request->items[$i]['product_id'], 
+                            'quantity' => $request->items[$i]['quantity'], 
+                            'amount' => $request->items[$i]['amount'],
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                            'deleted_at' => NULL,
+                    ];
 
-
+                    $OrderItemsModel->insert($data);
+                }
+            // }
             return response()->json([
-                'data' => $OrderItemsModel,
+                'data' => $this->orderBy('id', 'desc')->limit($count)->get(),
+                'total' => $count,
                 'msg' => 'New Order Item created successfully',
                 'statusCode' => 201
             ]);
@@ -123,6 +134,8 @@ Class OrderItemsModel extends Model {
                 'statusCode' => 409
             ]);
         }
+
+
     }
 
 

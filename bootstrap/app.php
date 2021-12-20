@@ -107,6 +107,8 @@ $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(Chuckrincon\LumenConfigDiscover\DiscoverServiceProvider::class);
 // $app->register(Tymon\JWTAuth\Provider::class,);
+// $app->register(Unicodeveloper\Paystack\PaystackServiceProvider::class) ;
+ 
 
 /*
 |--------------------------------------------------------------------------
