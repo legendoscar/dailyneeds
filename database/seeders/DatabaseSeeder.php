@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
         // $this->call(CategoriesSeeder::class);
         // $this->call(SubCategoriesSeeder::class);
         // $this->call(StoresSeeder::class);
-        $this->call(UserSeeder::class);
+        $this->call(UserRolesSeeder::class);
+        // $this->call(UserSeeder::class);
 
         // CategoryModel::factory()
         //     ->count(50)
