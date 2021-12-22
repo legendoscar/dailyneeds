@@ -23,7 +23,7 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'user_role' => $this->faker->numberBetween(1,1), 
+            'user_role' => 1, 
             'fname' => 'Admin', 
             'lname' => 'Super', 
             'phone' => '+234-806-470-9889', 
