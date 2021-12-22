@@ -39,16 +39,11 @@ class UserAddressController extends Controller
     }
 
 
-    public function showOneUserAddress(Request $request, UserAddressModel $UserAddressModel)
+    public function showOneUserAddress(Request $request, UserAddressModel $UserAddressModel, $id)
     {
-        // return 33;
-// return        $token = $request->header( 'Authorization' );
-        $UserAddressModel1 = UserAddressModel::findOrFail($request->id);
+        $UserAddressModel1 = UserAddressModel::findOrFail($id);
 
-        // $UserAddressModel = $UserAddressModel->id;
-
-        // return 44;
-        $response = $this->authorize('getOne', $UserAddressModel1);
+        $response = $this->authorize('getOwner', $UserAddressModel1);
 
         if($response->allowed()){
             return $UserAddressModel->showOneUserAddress($request); 
