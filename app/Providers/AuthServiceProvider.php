@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Models\UserAddressModel;
+use App\Policies\UserAddressPolicy as UserAddressPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,7 +32,11 @@ class AuthServiceProvider extends ServiceProvider
         // should return either a User instance or null. You're free to obtain
         // the User instance via an API token or any other method necessary.
 
+        Gate::policy('App\Models\UserAddressModel', 'App\Policies\UserAddressPolicy');
+
+
         $this->app['auth']->viaRequest('api', function ($request) {
+            return app('auth')->setRequest($request)->user();
 
             // if ($request->header('Authorization')) {
             //     $key = explode(' ',$request->header('Authorization'));
@@ -40,9 +46,11 @@ class AuthServiceProvider extends ServiceProvider
             //         $request->request->add(['id' => $user->id]);
             //     }
 
-            //     return $user;
+            //     return $user; 
                 
             // }
             });
+
+
     }
 }

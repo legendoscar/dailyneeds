@@ -20,7 +20,7 @@ use App\Http\Controllers;
 
 $router->group(['prefix' => 'api'], function ($router) 
 {
-    $router->get('me', ['uses' => 'Auth\AuthController@me']);
+    $router->get('profile', ['uses' => 'Auth\AuthController@getAuthenticatedUser']);
 });
  
 
@@ -32,9 +32,11 @@ $router->group(['prefix' => 'api/auth'], function () use ($router) {
     
     $router->post('register/store',  ['uses' => 'Auth\StoreAuthController@registerStore']);
     $router->post('login/store',  ['uses' => 'Auth\StoreAuthController@loginStore']);
+    
+    // $router->get('',  ['uses' => 'Auth\StoreAuthController@loginStore']);
 
     $router->post('login',  ['uses' => 'Auth\AuthController@login']);
-    $router->get('logout',  ['uses' => 'Auth\AuthController@logout']);
+    $router->post('logout',  ['uses' => 'Auth\AuthController@logout']); 
 
 
 

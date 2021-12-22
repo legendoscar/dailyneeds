@@ -3,12 +3,12 @@
     namespace App\Http\Controllers\Auth;
     
     use App\Models\User;
-    // use App\Models\StoresModel;  
+    use App\Models\StoresModel;  
     use App\Http\Controllers\Controller;
     use Illuminate\Support\Facades\Hash;
-    use Illuminate\Support\Facades\Auth;
     use Illuminate\Http\Request;
     use Illuminate\Http\Response;
+    use Tymon\JWTAuth\Facades\JWTAuth as JWTAuth;
     use Tymon\JWTAuth\Exceptions\JWTException;
 
     class AuthController extends Controller
@@ -193,16 +193,70 @@
         }
 
 
+        /**
+     * Check the validity of token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */ 
+    public function getAuthenticatedUser()
+    {
+        try {
+
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+                    return response()->json(['user_not_found'], 404);
+            }
+
+        } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+
+                return response()->json(['token_expired'], $e->getStatusCode());
+
+        } catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+
+                return response()->json(['token_invalid'], $e->getStatusCode());
+
+        } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
+
+                return response()->json(['token_absent'], $e->getStatusCode());
+
+        }
+
+        return response()->json(compact('user'));
+    }
+
      /**
      * Log the user out (Invalidate the token).
      *
      * @return \Illuminate\Http\JsonResponse
      */ 
-    public function logout()
-    {
-        auth()->logout();
+    public function logout( Request $request ) {
 
-        return response()->json(['message' => 'Successfully logged out']);
+        $token = $request->header( 'Authorization' );
+
+        try {
+            JWTAuth::parseToken()->invalidate( $token );
+
+            return response()->json( [
+                'error'   => true,
+                'message' => trans( 'auth.logged_out' )
+            ] );
+        } catch ( TokenExpiredException $exception ) {
+            return response()->json( [
+                'error'   => true,
+                'message' => trans( 'auth.token.expired' )
+
+            ], 401 );
+        } catch ( TokenInvalidException $exception ) {
+            return response()->json( [
+                'error'   => true,
+                'message' => trans( 'auth.token.invalid' )
+            ], 401 );
+
+        } catch ( JWTException $exception ) {
+            return response()->json( [
+                'error'   => true,
+                'message' => trans( 'auth.token.missing' )
+            ], 500 );
+        }
     }
 
     

@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Auth\AuthenticationException;
+// use Illuminate\Auth\Access\AuthorizationException;
 use Throwable, Exception, Auth;
 
 use Response;
@@ -16,6 +17,8 @@ use Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+
+// use Tymon\JWTAuth\Exceptions\JWTException;
 
 class Handler extends ExceptionHandler
 {
@@ -56,7 +59,16 @@ class Handler extends ExceptionHandler
      * @throws \Throwable
      */
     public function render($request, Throwable $exception)
-    {
+    { 
+        if ($exception instanceof AuthorizationException)
+        {
+            // return $token = $request->bearerToken();
+            return response()->json(['message' => 'Forbidden. You can\'t perform this operation.'], 403);
+        }
+        if ($exception instanceof ModelNotFoundException && $request->wantsJson()) {
+            return response()->json(['message' => 'resource not found'], 404);
+        }
+
         return parent::render($request, $exception);
     }
 
@@ -74,6 +86,35 @@ class Handler extends ExceptionHandler
         return redirect()->guest(route('login'));
     }
 
+     /**
+     * Check the validity of token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */ 
+    public function getAuthenticatedUser()
+    {
+        try {
+
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+                    return response()->json(['user_not_found'], 404);
+            }
+
+        } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+
+                return response()->json(['token_expired'], $e->getStatusCode());
+
+        } catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+
+                return response()->json(['token_invalid'], $e->getStatusCode());
+
+        } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
+
+                return response()->json(['token_absent'], $e->getStatusCode());
+
+        }
+
+        return response()->json(compact('user'));
+    }
     
     public function register()
     {

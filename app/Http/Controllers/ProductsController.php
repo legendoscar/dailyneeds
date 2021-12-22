@@ -12,10 +12,11 @@ class ProductsController extends Controller
 
     public function __construct()
     {
+        $this->middleware('auth:api', ['except' => ['showAllProducts', 'showOneProduct']]);
+        
         $this->middleware('store', ['except' => [
             // 'showAllProducts',
             'showOneProduct']]);
-        // $this->middleware('auth:user', ['except' => ['showAllProducts','showOneProduct']]);
         // $this->middleware('admin', ['only' => ['createCat','updateCat', 'deleteCat', 'deleteCatPerm']]);
     }
 

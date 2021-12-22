@@ -12,10 +12,13 @@ class OrdersController extends Controller
 
     public function __construct()
     {
-        // $this->middleware('admin', ['except' => [
-        //     'showAllOrders',
-        //      'showOneOrder']]);
-        // $this->middleware('auth:user', ['except' => ['showAllProducts','showOneProduct']]);
+        $this->middleware('auth:api');
+        
+        $this->middleware('admin', ['only' => [
+            'showAllOrders',
+            //  'showOneOrder'
+            ]
+            ]);
         // $this->middleware('admin', ['only' => ['createCat','updateCat', 'deleteCat', 'deleteCatPerm']]);
     }
 

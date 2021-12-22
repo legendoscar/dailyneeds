@@ -68,6 +68,14 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->post('location', ['uses' => 'LocationsController@createLocation']);
         $router->delete('location/{id:[0-9]+}', ['uses' => 'LocationsController@deleteLocation']);
         $router->put('location/{id}', ['uses' => 'LocationsController@updateLocation']);
+       
+       
+        /* USER ADDRESS */
+        $router->get('useraddress',  ['uses' => 'UserAddressController@showAllUserAddress']);
+        $router->get('useraddress/{id:[0-9]+}', ['uses' => 'UserAddressController@showOneUserAddress']);
+        // $router->post('location', ['uses' => 'LocationsController@createLocation']);
+        $router->delete('useraddress/{id:[0-9]+}', ['uses' => 'UserAddressController@deleteUserAddress']);
+        // $router->put('location/{id}', ['uses' => 'LocationsController@updateLocation']);
         
         
         /* ORDER ITEMS */

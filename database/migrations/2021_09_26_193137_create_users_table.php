@@ -63,7 +63,7 @@ class CreateUsersTable extends Migration
             
             $table->string('address_state');
             $table->string('address_city');
-            $table->string('address_zip_code');
+            $table->string('address_zip_code'); 
             $table->string('address_street');
             $table->string('address_latitude');
             $table->string('address_longitude');
