@@ -9,6 +9,14 @@ use Illuminate\Support\Facades\Validator;
 
 class SubCatController extends Controller
 {
+
+    public function __construct()
+    {
+        // $this->middleware('auth:api', ['except' => ['getAllStoreCat','getCatSingle']]);
+        $this->middleware('admin', ['only' => ['createSubCat','updateSubCat', 'deleteSubCat', 'deleteSubCatPerm']]);
+    }
+
+
     /**
      * Create a new controller instance.
      *
@@ -18,7 +26,7 @@ class SubCatController extends Controller
     public function showAllStoreSubCat(SubCatModel $SubCatModel)
     {
         //id=1
-        return $SubCatModel->storeSubCatGetAll();
+        return $SubCatModel->storeSubCatGetAll(); 
 
     }
 
@@ -29,7 +37,7 @@ class SubCatController extends Controller
 
     }
 
-
+ 
     public function getSubCatSingle(Request $request, SubCatModel $SubCatModel)
     {
 
@@ -40,10 +48,10 @@ class SubCatController extends Controller
     public function validData(Request $request){
 
         return $this->validate($request, [
-            'cat_title' => 'bail|required|unique:categories|string',
-            'cat_desc' => 'bail|string',
-            'cat_type' => 'bail|numeric|required',
-            'cat_image' => 'bail|file',
+            'sub_cat_title' => 'bail|required|unique:sub_categories|string',
+            'sub_cat_desc' => 'bail|string',
+            'cat_id' => 'bail|numeric|required',
+            'sub_cat_image' => 'bail|file',
         ]);
 
     }
@@ -60,25 +68,34 @@ class SubCatController extends Controller
     }
 
 
-    public function updateCat(Request $request)
+    public function updateSubCat(Request $request)
     {
-        $this->validate($request, [
-            'cat_title' => 'bail|unique:categories|string',
-            'cat_desc' => 'bail|string',
-            'cat_type' => 'bail|numeric',
-            'cat_image' => 'bail|file',
-        ]);
+        $rules = [
+            'sub_cat_title' => 'bail|unique:sub_categories|string',
+            'sub_cat_desc' => 'bail|string',
+            'cat_id' => 'bail|numeric',
+            'sub_cat_image' => 'bail|file',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errorMsg' => $validator->errors(), 
+                'statusCode' => 422
+            ]);
+         };
 
         $SubCatModel = new SubCatModel;
 
-        return $SubCatModel->storeCatUpdate($request);
+        return $SubCatModel->updateSubCat($request);
     }
 
 
-    public function deleteCat(Request $request, SubCatModel $SubCatModel)
+    public function deleteSubCat(Request $request, SubCatModel $SubCatModel)
     {
         $id = $request->id;
-        return $SubCatModel->storeCatDeleteOne($id);
+        return $SubCatModel->deleteSubCat($request, $id);
     }
 
     public function getProductCategory(Request $request, SubCatModel $SubCatModel)

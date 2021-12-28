@@ -56,17 +56,15 @@ class CreateUsersTable extends Migration
 
         Schema::create('user_address', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id'); 
             $table->string('address_title');
-            $table->string('address_body');
-            
-            
-            $table->string('address_state');
-            $table->string('address_city');
-            $table->string('address_zip_code'); 
             $table->string('address_street');
-            $table->string('address_latitude');
-            $table->string('address_longitude');
+            $table->string('address_city');
+            $table->string('address_state');
+            $table->string('address_country');
+            $table->string('address_zip_code'); 
+            $table->string('address_latitude')->nullable();
+            $table->string('address_longitude')->nullable();
             $table->unsignedBigInteger('user_location_id')->nullable();
 
             $table->boolean('address_primary')->default(false);

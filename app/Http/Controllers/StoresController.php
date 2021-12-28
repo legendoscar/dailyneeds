@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth as JWTAuth;
+
 
 
 class StoresController extends Controller
@@ -26,7 +28,7 @@ class StoresController extends Controller
     {
         return $StoresModel->getAllStores();
     } 
-    
+     
 
     public function getSingleStore(Request $request, StoresModel $StoresModel)
     {
@@ -120,13 +122,66 @@ class StoresController extends Controller
     }
 
 
-    public function deleteStore(Request $request, StoresModel $StoresModel)
+    public function deleteStore(Request $request, $id, StoresModel $StoresModel)
     {
 
-        return $StoresModel->deleteStore($request->id);
+        $StoresModelData = StoresModel::findOrFail($id);
+
+        // return auth()->guard('store')->user()->id === $StoresModelData->id ? 'true' : 'false';
+
+        return $response = $this->authorize('getStoreOwner', $StoresModelData);
+
+        if($response->allowed()){
+
+            return $StoresModel->deleteStore($StoresModelData->id);
+        }
     }
 
 
+     /**
+         * Get user details.
+         *
+         * @param  Request  $request
+         * @return Response
+         */	 	
+        public function profile()
+        {
+                    
+            $token = JWTAuth::getToken();
+
+            if(!$token){
+            //   throw new JWTException('Token not provided');
+            return response()->json(['msg' => 'token_missing']);
+            }
+            if (! $parse = JWTAuth::parseToken()) {
+                return response()->json(['user_not_found'], 404);
+            }
+
+            try {
+
+                if (!JWTAuth::parseToken()) {
+                        return response()->json(['user_not_found'], 404);
+                }
+
+            } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+
+                    return response()->json(['token_expired'], $e->getStatusCode());
+
+            } catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+
+                    return response()->json(['token_invalid'], $e->getStatusCode());
+
+            } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
+
+                    return response()->json(['token_absent'], $e->getStatusCode());
+
+            }
+
+            
+            return response()->json([
+                'data' => auth()->guard('store')->user()
+            ]);
+        }
 
     //
 }

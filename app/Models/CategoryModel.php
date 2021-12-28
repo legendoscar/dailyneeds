@@ -102,7 +102,7 @@ Class CategoryModel extends Model {
             $CategoryModel->cat_type = $request->cat_type;
             $CategoryModel->cat_image = $image_name;
 
-            if($request->getRequestUri() == '/api/category/store/') {
+            if($request->getRequestUri() == '/api/category/store') {
                 $CategoryModel->cat_type = 1;
                 $type = 'Store';
             }
@@ -156,9 +156,10 @@ Class CategoryModel extends Model {
             $CategoryModel->cat_desc = $request->has('cat_desc') ? $request->cat_desc : $CategoryModel->cat_desc;
             $CategoryModel->cat_image = $request->has('cat_image') ? $request->cat_image : $CategoryModel->cat_image;
             $CategoryModel->cat_type = $request->has('cat_type') ? $request->cat_type : $CategoryModel->cat_type;
+            $CategoryModel->is_active = $request->has('is_active') ? $request->is_active : $CategoryModel->is_active;
 
 
-            if($request->getRequestUri() == '/api/category/store/') {
+            if($request->getRequestUri() == '/api/category/store') {
                 // $CategoryModel->cat_type = 1;
                 $type = 'Store';
             }
@@ -188,7 +189,7 @@ Class CategoryModel extends Model {
     public function deleteCat($id){ #trash
 
         $data = $this->findorFail($id)->delete();
-        return $this->exception($data, $success = 'Category moved to recycle bin.', $failed = 'Delete operation failed! No record found for id: ' . $id . '!');
+        return $this->exception($data, $success = 'Category deleted successfully.', $failed = 'Delete operation failed! No record found for id: ' . $id . '!');
 
     }
     

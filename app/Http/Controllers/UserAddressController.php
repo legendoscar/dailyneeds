@@ -41,29 +41,33 @@ class UserAddressController extends Controller
 
     public function showOneUserAddress(Request $request, UserAddressModel $UserAddressModel, $id)
     {
-        $UserAddressModel1 = UserAddressModel::findOrFail($id);
+        $UserAddressModelData = UserAddressModel::findOrFail($id);
 
-        $response = $this->authorize('getOwner', $UserAddressModel1);
+        $response = $this->authorize('getOwner', $UserAddressModelData);
 
-        if($response->allowed()){
+        if($response->allowed()){ 
             return $UserAddressModel->showOneUserAddress($request); 
 
         }
     }
+ 
 
-
-    public function createLocation(Request $request, UserAddressModel $UserAddressModel)
+    public function createUserAddress(Request $request, UserAddressModel $UserAddressModel)
     {          
         // if(auth()->guard('store')){
 
             $rules = [
-                'name' => 'bail|string|required|unique:locations,name',
-                'desc' => 'bail|string',
-                'location_country_name' => 'bail|string',
-                'location_country_code' => 'bail|string',
-                'is_popular' => 'bail|boolean',
-                'is_recommended' => 'bail|boolean',
-                'is_active' => 'bail|boolean',
+                'user_id' => 'bail|string|required|exists:users,id',
+                'user_location_id' => 'bail|string|required|exists:locations,id',
+                'address_title' => 'bail|required|string',
+                'address_street' => 'bail|required|string',
+                'address_city' => 'bail|required|string',
+                'address_state' => 'bail|required|string',
+                'address_country' => 'bail|required|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
+                'address_zip_code' => 'bail|required|regex:/\b\d{6}\b/',
+                'address_latitude' => ['bail', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+                'address_longitude' => ['bail', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+                'address_primary' => 'bail|boolean',
             ];
     
             $validator = Validator::make($request->all(), $rules);
@@ -75,7 +79,7 @@ class UserAddressController extends Controller
                 ]);
              };
 
-            return $UserAddressModel->createLocation($request);
+            return $UserAddressModel->createUserAddress($request);
         // }
     
         // return response()->json([
@@ -85,17 +89,21 @@ class UserAddressController extends Controller
     }
 
 
-    public function updateLocation(Request $request, UserAddressModel $UserAddressModel)
+    public function updateUserAddress(Request $request, UserAddressModel $UserAddressModel)
     {
 
         $rules = [
-            'name' => 'bail|string|required|unique:locations,name',
-            'desc' => 'bail|string',
-            'location_country_name' => 'bail|string',
-            'location_country_code' => 'bail|string',
-            'is_popular' => 'bail|boolean',
-            'is_recommended' => 'bail|boolean',
-            'is_active' => 'bail|boolean',
+            'user_id' => 'bail|string|required|exists:users,id',
+            'user_location_id' => 'bail|string|exists:locations,id',
+            'address_title' => 'bail|string',
+            'address_street' => 'bail|string',
+            'address_city' => 'bail|string',
+            'address_state' => 'bail|string',
+            'address_country' => 'bail|regex:/(^[-0-9A-Za-z.,\/ ]+$)/',
+            'address_zip_code' => 'bail|regex:/\b\d{6}\b/',
+            'address_latitude' => ['bail', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'address_longitude' => ['bail', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+            'address_primary' => 'bail|boolean',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -109,7 +117,13 @@ class UserAddressController extends Controller
 
         //  return $request->all();
 
-         return $UserAddressModel->updateLocation($request);
+        $UserAddressModel = UserAddressModel::findOrFail($request->id);
+
+        $response = $this->authorize('getOwner', $UserAddressModel);
+ 
+         if($response->allowed()){
+            return $UserAddressModel->updateUserAddress($request);
+         }
 
        
     }
@@ -119,7 +133,7 @@ class UserAddressController extends Controller
     {
         $UserAddressModel = UserAddressModel::findOrFail($request->id);
 
-       $response = $this->authorize('getOne', $UserAddressModel);
+       $response = $this->authorize('getOwner', $UserAddressModel);
 
         if($response->allowed()){
             return $UserAddressModel->deleteUserAddress($request->id); 

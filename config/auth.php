@@ -15,7 +15,7 @@
 
         'admin' => [
             'driver' => 'jwt',
-            'provider' => 'admins',
+            'provider' => 'users',
         ],
         'user' => [
             'driver' => 'jwt',
@@ -30,10 +30,6 @@
 
     'providers' => [
         
-        'admins' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Admin::class,
-        ],
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,

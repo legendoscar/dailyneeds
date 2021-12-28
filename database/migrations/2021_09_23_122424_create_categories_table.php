@@ -34,7 +34,7 @@ class CreateCategoriesTable extends Migration
             $table->string('sub_cat_desc')->nullable();
             $table->string('sub_cat_image')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->timestamps();
+            $table->timestamps(); 
             $table->softDeletes();
 
 

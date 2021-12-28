@@ -65,7 +65,15 @@ Class SubCatModel extends Model {
 
     public function getSubCatSingle($id){
 
-        $data = $this->find($id);
+        $data = $this
+        ->leftJoin('categories', 'categories.id', '=', 'sub_categories.cat_id')
+        ->select('categories.id as categories.pk_id', 'sub_categories.id as subcat.pk_id', 'cat_id',
+        'sub_cat_title', "sub_cat_desc", "sub_cat_image", "categories.is_active as cat.is_active", "sub_categories.is_active as subcat.is_active",
+         "categories.created_at as cat.created_at", "categories.updated_at as cat.updated_at", "categories.deleted_at as cat.deleted_at",
+         "sub_categories.created_at as subcat.created_at", "sub_categories.updated_at as subcat.updated_at", "sub_categories.deleted_at as subcat.deleted_at",
+            "cat_title", "cat_type", "cat_image"
+        )
+        ->get();
         return $this->exception($data);
     }
 
@@ -73,7 +81,7 @@ Class SubCatModel extends Model {
 
         $image_name = $request->cat_image;
         if($request->hasFile('sub_cat_image')){
-            $image_name = $request->cat_image->getClientOriginalName();
+            $image_name = $request->sub_cat_image->getClientOriginalName();
 
             $path = 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
             $destinationPath = app()->basePath($path);
@@ -91,7 +99,7 @@ Class SubCatModel extends Model {
 
             $SubCategoryModel->sub_cat_title = $request->sub_cat_title;
             $SubCategoryModel->sub_cat_desc = $request->sub_cat_desc;
-            $SubCategoryModel->sub_cat_type = $request->sub_cat_type;
+            $SubCategoryModel->cat_id = $request->cat_id;
             $SubCategoryModel->sub_cat_image = $image_name;
             $SubCategoryModel->save();
 
@@ -110,8 +118,9 @@ Class SubCatModel extends Model {
     }
 
 
-    public function updateCat(Request $request){
+    public function updateSubCat(Request $request){
 
+        // return 33;
         $image_name = $request->cat_image;
         if($request->hasFile('sub_cat_image')){
             $image_name = $request->cat_image->getClientOriginalName();
@@ -135,22 +144,51 @@ Class SubCatModel extends Model {
             $SubCategoryModel->sub_cat_title = $request->has('sub_cat_title') ? $request->sub_cat_title : $SubCategoryModel->sub_cat_title;
             $SubCategoryModel->sub_cat_desc = $request->has('sub_cat_desc') ? $request->sub_cat_desc : $SubCategoryModel->sub_cat_desc;
             $SubCategoryModel->sub_cat_image = $request->has('sub_cat_image') ? $request->sub_cat_image : $SubCategoryModel->sub_cat_image;
-            $SubCategoryModel->cat_type = $request->has('cat_type') ? $request->cat_type : $SubCategoryModel->cat_type;
+            $SubCategoryModel->cat_id = $request->has('cat_id') ? $request->cat_id : $SubCategoryModel->cat_id;
+
+            // return $SubCategoryModel->sub_cat_title;
+            if($request->getRequestUri() == '/api/category/store') {
+                // $CategoryModel->cat_type = 1;
+                $type = 'Store category';
+            }
+           else{
+                // $CategoryModel->cat_type = 2;
+                $type = 'Product category';
+           }
+
             $SubCategoryModel->save();
 
             return response()->json([
                 'data' => $SubCategoryModel,
-                'msg' => 'Records updated successfully.',
-                'statusCode' => 200]);
+                'msg' => $type . ' updated successfully.',
+                'statusCode' => 200
+            ]);
         }
         catch(\Exception $e){
             return response()->json([
-                'msg' => 'Update operation failed!',
+                'msg' => $type . ' operation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ]); 
         }
     }
+
+    public function deleteSubCat(request $request, $id){ #trash
+
+        $data = $this->findorFail($id)->delete();
+        if($request->getRequestUri() == '/api/category/store') {
+            // $CategoryModel->cat_type = 1;
+            $type = 'Store sub category';
+        }
+       else{
+            // $CategoryModel->cat_type = 2;
+            $type = 'Product sub category';
+       }
+
+        return $this->exception($data, $success = $type . ' deleted successfully.', $failed = $type . ' Delete operation failed! No record found for id: ' . $id . '!');
+
+    }
+
 
 
     public function ProductCategory($id){

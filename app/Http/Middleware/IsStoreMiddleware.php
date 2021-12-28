@@ -6,6 +6,12 @@ use Closure;
 
 class IsStoreMiddleware
 {
+
+    public function before($request, Closure $next){
+        if(auth()->user()->user_role === 1 ){
+            return $next($request);
+        }
+    }
     /**
      * Handle an incoming request.
      *
@@ -13,18 +19,18 @@ class IsStoreMiddleware
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next, $guard = 'store')
+    public function handle($request, Closure $next)
     {
-
-        if (!auth()->guard($guard)) {
+// return 33;
+        if (auth()->guard('store')->user()) {
             // return redirect('/');
-            return response()->json([
-                'msg' => 'Forbidden! You don\'t have store access', 
-                'errCode' => 403 
-            ]);
+            return $next($request);
         }
+        return response()->json([
+            'msg' => 'Forbidden! You don\'t have store access', 
+            'errCode' => 403 
+        ]); 
 
-        return $next($request);
 
     }
 }

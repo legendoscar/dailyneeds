@@ -15,7 +15,7 @@ Class UserAddressModel extends Model {
 
     protected $table = 'user_address';
 
-    protected $fillable = ['user_id', 'address_title', 'address_body', 'address_state', 'address_city',
+    protected $fillable = ['user_id', 'address_title', 'address_country', 'address_state', 'address_city',
     'address_zip_code', 'address_street', 'address_latitude', 'address_longitude', 'user_location_id'
 ]; 
 
@@ -84,7 +84,7 @@ Class UserAddressModel extends Model {
                 'statusCode' => 404
             ]);
     
-            return $ret;
+            return $ret; 
     
             }catch(\Exception $e){
                 return response()->json([
@@ -95,66 +95,71 @@ Class UserAddressModel extends Model {
             }
     }
 
-    public function createLocation(Request $request){
+    public function createUserAddress(Request $request){
         try{
-            $LocationsModel = new LocationsModel;
+            // return 'ready';
+            $UserAddressModel = new UserAddressModel;
                 
-                $LocationsModel->name = $request->name;
-                $LocationsModel->desc = $request->desc;
-                $LocationsModel->location_country_name = $request->location_country_name;
-                $LocationsModel->location_country_code = $request->location_country_code;
-                $LocationsModel->is_popular = $request->is_popular;
-                $LocationsModel->is_recommended = $request->is_recommended;
-                $LocationsModel->is_active = $request->is_active;
-                $LocationsModel->save();
+                $UserAddressModel->user_id = $request->user_id;
+                $UserAddressModel->user_location_id = $request->user_location_id;
+                $UserAddressModel->address_title = $request->address_title;
+                $UserAddressModel->address_street = $request->address_street;
+                $UserAddressModel->address_city = $request->address_city;
+                $UserAddressModel->address_state = $request->address_state;
+                $UserAddressModel->address_country = $request->address_country;
+                $UserAddressModel->address_zip_code = $request->address_zip_code;
+                $UserAddressModel->address_latitude = $request->address_latitude;
+                $UserAddressModel->address_longitude = $request->address_longitude;
+                $UserAddressModel->address_primary = $request->address_primary;
+                $UserAddressModel->save();
                 
             // }
             return response()->json([
-                'data' => $LocationsModel,
+                'data' => $UserAddressModel,
                 // 'total' => $count,
-                'msg' => 'New Location created successfully',
+                'msg' => 'New User address created successfully',
                 'statusCode' => 201
             ]);
         } catch(\Exception $e){
             return response()->json([
-                'msg' => 'New Locations creation failed!',
+                'msg' => 'New user address creation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
             ]);
         }
-
-
     }
 
 
-
-
-    public function updateLocation(Request $request){
+    public function updateUserAddress(Request $request){
         try {
+            // return $request->all();
             $request->updated_at = Carbon::now()->toDateTimeString();
 
 
-            $LocationsModel = LocationsModel::findorFail($request->id);
+            $UserAddressModel = UserAddressModel::findorFail($request->id);
 
-            $LocationsModel->name = $request->filled('name') ? $request->name : $LocationsModel->name;
-            $LocationsModel->desc = $request->filled('desc') ? $request->desc : $LocationsModel->desc;
-            $LocationsModel->location_country_name = $request->filled('location_country_name') ? $request->location_country_name : $LocationsModel->location_country_name;
-            $LocationsModel->location_country_code = $request->filled('location_country_code') ? $request->location_country_code : $LocationsModel->location_country_code;
-            $LocationsModel->is_popular = $request->filled('is_popular') ? $request->is_popular : $LocationsModel->is_popular;
-            $LocationsModel->is_recommended = $request->filled('is_recommended') ? $request->is_recommended : $LocationsModel->is_recommended;
-            $LocationsModel->is_active = $request->filled('is_active') ? $request->is_active : $LocationsModel->is_active;
+            $UserAddressModel->user_id = $request->filled('user_id') ? $request->user_id : $UserAddressModel->user_id;
+            $UserAddressModel->user_location_id = $request->filled('user_location_id') ? $request->user_location_id : $UserAddressModel->user_location_id;
+            $UserAddressModel->address_street = $request->filled('address_street') ? $request->address_street : $UserAddressModel->address_street;
+            $UserAddressModel->address_city = $request->filled('address_city') ? $request->address_city : $UserAddressModel->address_city;
+            $UserAddressModel->address_state = $request->filled('address_state') ? $request->address_state : $UserAddressModel->address_state;
+            $UserAddressModel->address_country = $request->filled('address_country') ? $request->address_country : $UserAddressModel->address_country;
+            $UserAddressModel->address_zip_code = $request->filled('address_zip_code') ? $request->address_zip_code : $UserAddressModel->address_zip_code;
+            $UserAddressModel->address_latitude = $request->filled('address_latitude') ? $request->address_latitude : $UserAddressModel->address_latitude;
+            $UserAddressModel->address_longitude = $request->filled('address_longitude') ? $request->address_longitude : $UserAddressModel->address_longitude;
+            $UserAddressModel->address_primary = $request->filled('address_primary') ? $request->address_primary : $UserAddressModel->address_primary;
 
-            $LocationsModel->save();
+            $UserAddressModel->save();
 
-            // $LocationsModel->update($request->all());
+            // $UserAddressModel->update($request->all());
 
             return response()->json([
-                'data' => $LocationsModel,
-                'msg' => 'Location updated successfully.',
+                'data' => $UserAddressModel,
+                'msg' => 'User Address updated successfully.',
                 'statusCode' => 200]);
             }catch(\Exception $e){
                 return response()->json([
-                    'msg' => 'Location update operation failed!',
+                    'msg' => 'User Address update operation failed!',
                     'err' => $e->getMessage(),
                     'statusCode' => 409
             ]); 

@@ -17,7 +17,7 @@ Class OrdersModel extends Model {
     protected $table = 'orders';
 
     protected $fillable = ['user_id', 'store_id', 'driver_id', 'order_code', 'kitchen_instructions', 'location',
-    'destination_address', 'tax_charge', 'store_charge', 'delivery_charge', 'total_amount', 'delivery_mode',
+    'destination_address', 'packaging', 'tax_charge', 'store_charge', 'delivery_charge', 'total_amount', 'delivery_mode',
     'payment_mode', 'payment_status', 'cash_change_amount', 'time_order_accepted', 'time_order_assigned',
     'store_schedule_order_reason', 'store_schedule_order_time', 'store_cancel_reason', 'store_decline_cancel_time',
     'time_driver_accepted_delivery', 'user_schedule_order_reason', 'user_schedule_order_time', 'user_decline_cancel_reason',
@@ -137,6 +137,7 @@ Class OrdersModel extends Model {
                 $OrdersModel->store_id = $request->store_id;
                 $OrdersModel->order_code = $this->generateOrderCodeNumber();
                 $OrdersModel->kitchen_instructions = $request->kitchen_instructions;
+                $OrdersModel->packaging = $request->packaging;
                 $OrdersModel->location = $request->location;
                 $OrdersModel->destination_address = $request->destination_address;
 

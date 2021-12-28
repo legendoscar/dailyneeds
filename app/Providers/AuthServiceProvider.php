@@ -2,9 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use App\Models\UserAddressModel;
-use App\Policies\UserAddressPolicy as UserAddressPolicy;
+
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,6 +31,13 @@ class AuthServiceProvider extends ServiceProvider
         // the User instance via an API token or any other method necessary.
 
         Gate::policy('App\Models\UserAddressModel', 'App\Policies\UserAddressPolicy');
+        Gate::policy('App\Models\ProductsModel', 'App\Policies\StoreProductOwnerPolicy');
+        Gate::policy('App\Models\StoresModel', 'App\Policies\StoreOwnerPolicy');
+        
+        // Gate::define('getProductOwner', function( $StoresModel, $ProductsModel) {
+        //     return $ProductsModel->store_id;
+        //     //  === $StoresModel->id;
+        // });
 
 
         $this->app['auth']->viaRequest('api', function ($request) {

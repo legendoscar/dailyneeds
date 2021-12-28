@@ -8,6 +8,9 @@
     use Illuminate\Http\Response;
     use Tymon\JWTAuth\Exceptions\JWTException;
     use Illuminate\Support\Facades\Validator;
+    use Tymon\JWTAuth\Facades\JWTAuth as JWTAuth;
+
+
     class StoreAuthController extends Controller
     {
 
@@ -125,28 +128,7 @@
 
         
         
-         /**
-         * Get user details.
-         *
-         * @param  Request  $request
-         * @return Response
-         */	 	
-        public function me()
-        {
-            // return Auth::user();
-        //     try {
-        //     return response()->json(auth()->userOrFail());
-        //     // return response()->json(auth()->user());
-
-        // } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
-        //     return response()->json([
-        //         'err' => $e->getMessage(),
-                
-                
-        //     ]);
-            $user = auth()->user();
-            return response()->json(['user'=>$user], 201);
-        }
+        
         
         /**
          * Store a new store.

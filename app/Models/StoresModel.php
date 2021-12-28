@@ -17,8 +17,7 @@ use Illuminate\Support\Facades\Hash;
 
 Class StoresModel extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject {
 
-    use Authenticatable, Authorizable, HasFactory;
-    use SoftDeletes;
+    use Authenticatable, Authorizable, HasFactory, SoftDeletes;
     protected $table = 'stores';
     protected $guard = 'store';
 
@@ -170,7 +169,7 @@ Class StoresModel extends Model implements AuthenticatableContract, Authorizable
         try {
             $request->updated_at = Carbon::now()->toDateTimeString();
 
-            $StoreModel = $this->findorFail($request->id);
+            $StoreModel = $this->findorFail($request->id); 
 
             $StoreModel->store_name = $request->has('store_name') ? $request->store_name : $StoreModel->store_name;
             $StoreModel->store_cat_id = $request->has('store_cat_id') ? $request->store_cat_id : $StoreModel->store_cat_id;
@@ -201,7 +200,7 @@ Class StoresModel extends Model implements AuthenticatableContract, Authorizable
     }
 
     public function deleteStore($id){
-
+ 
         // return 33;
 
         $data = $this->findorFail($id)->delete();

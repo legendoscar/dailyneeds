@@ -88,6 +88,7 @@ $app->routeMiddleware([
     'auth.jwt'=>\App\Http\Middleware\JwtMiddleWare::class,
     'storeCanCreate'=>\App\Http\Middleware\CanCreateStoreMiddleware::class,
     'store'=>\App\Http\Middleware\IsStoreMiddleware::class,
+    'storeOrAdmin'=>\App\Http\Middleware\IsAdminOrStoreMiddleware::class,
     'api.can' => \App\Http\Middleware\ApiAuthorization::class,
 ]);
 

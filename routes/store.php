@@ -18,10 +18,13 @@ use App\Http\Controllers;
 //     return $router->app->version();
 // });
 
-$router->group(['prefix' => 'api/customer', 'middleware' => 'store'], function ($router) {
+$router->group(['prefix' => 'api/store'], function ($router) {
     
-    $router->get('/', function () use ($router) {
-        return 'store';
-    });
+    // $router->get('/', function () use ($router) {
+    //     return 'store';
+    // });
+
+    $router->get('profile', ['uses' => 'StoresController@profile']);
+    $router->delete('profile/{id:[0-9]+}', ['uses' => 'StoresController@deleteStore']);
 
 });

@@ -23,3 +23,4 @@ Class ProductsCatModel extends Model {
         return $this->hasMany('App\Models\ProductsSubCatModel', 'id');
     }
 }
+ 

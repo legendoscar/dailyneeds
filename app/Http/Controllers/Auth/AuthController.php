@@ -112,7 +112,7 @@
             ], 500);
         };
             return  response()->json([
-                
+                'msg' => 'Login successful',
                 'tokenData' => $this->respondWithToken($token),
                 'userData' => auth()->user()                    
             ]);

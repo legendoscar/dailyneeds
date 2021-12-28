@@ -70,11 +70,13 @@ class CatController extends Controller
 
     public function updateCat(Request $request, CategoryModel $CategoryModel)
     {
+        // return 44;
         $rules = [
             'cat_title' => 'bail|unique:categories|string',
             'cat_desc' => 'bail|string',
             'cat_type' => 'bail|numeric',
             'cat_image' => 'bail|file',
+            'is_active' => 'bail|boolean',
         ];
 
         $validator = Validator::make($request->all(), $rules);

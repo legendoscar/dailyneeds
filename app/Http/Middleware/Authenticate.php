@@ -54,7 +54,7 @@ class Authenticate
                 }else{
                     return response()->json(['status' => 'Authorization Token not found']);
                 }
-            }
+            } 
         // } 
         return $next($request);
         

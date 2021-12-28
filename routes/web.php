@@ -25,6 +25,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
     
     $router->get('user/profile', ['uses' => 'UserProfileController@profile']);
+    
 
     
     //     /* STORE CATEGORIES */
@@ -43,23 +44,30 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->get('category/product/{id}', ['uses' => 'CatController@getCatSingle']);
         $router->put('category/product/{id}', ['uses' => 'CatController@updateCat']);
         $router->delete('category/product/{id:[0-9]+}', ['uses' => 'CatController@deleteCat']);
-        $router->get('category/product/{id:[0-9]+}/sub', ['uses' => 'CatController@getCatSub']); //get the subCat of single prod cat
-
-
+        
+        
         
         /* PRODUCT SUB CATEGORIES */
-    
-        // $router->get('product/sub',  ['uses' => 'SubCatController@showAllProductSubCat']); //show all prod sub cat
-        $router->get('product/sub/{id}',  ['uses' => 'SubCatController@getSubCatSingle']); // get single sub category
+        // get the sub cat of a product cat
+        $router->get('category/product/{id:[0-9]+}/sub', ['uses' => 'CatController@getCatSub']); //get the subCat of single prod cat
+        $router->post('category/sub/product', ['uses' => 'SubCatController@createSubCat']); //create sub cat
+        // $router->get('category/sub/product/sub',  ['uses' => 'SubCatController@showAllProductSubCat']); //show all prod sub cat
+        $router->get('category/sub/product/{id}',  ['uses' => 'SubCatController@getSubCatSingle']); // get single sub category
         $router->get('product/sub/{id}/cat',  ['uses' => 'SubCatController@getProductCategory']); //get the main cat of a sub
-
-
+        $router->put('category/sub/product/{id}',  ['uses' => 'SubCatController@updateSubCat']); // update single sub category
+        $router->delete('category/sub/product/{id}',  ['uses' => 'SubCatController@deleteSubCat']); // delete single sub category
+        
+        
+        /* PRODUCT  */
         $router->get('product',  ['uses' => 'ProductsController@showAllProducts']);
         $router->get('product/{id:[0-9]+}', ['uses' => 'ProductsController@showOneProduct']);
+        $router->get('product/store/{id:[0-9]+}', ['uses' => 'ProductsController@showStoreProducts']); //show products owned by stored
         $router->post('product', ['uses' => 'ProductsController@createProduct']);
         $router->put('product/{id}', ['uses' => 'ProductsController@updateproduct']);
-        $router->get('product/{id:[0-9]+}/cat', ['uses' => 'ProductsController@ProductBelongsTo']);
         $router->delete('product/{id:[0-9]+}', ['uses' => 'ProductsController@deleteProduct']);
+
+        
+        $router->get('product/{id:[0-9]+}/cat', ['uses' => 'ProductsController@ProductBelongsTo']);
         
         
         /* LOCATIONS */
@@ -73,9 +81,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         /* USER ADDRESS */
         $router->get('useraddress',  ['uses' => 'UserAddressController@showAllUserAddress']);
         $router->get('useraddress/{id:[0-9]+}', ['uses' => 'UserAddressController@showOneUserAddress']);
-        // $router->post('location', ['uses' => 'LocationsController@createLocation']);
+        $router->post('useraddress', ['uses' => 'UserAddressController@createUserAddress']);
         $router->delete('useraddress/{id:[0-9]+}', ['uses' => 'UserAddressController@deleteUserAddress']);
-        // $router->put('location/{id}', ['uses' => 'LocationsController@updateLocation']);
+        $router->put('useraddress/{id}', ['uses' => 'UserAddressController@updateUserAddress']);
         
         
         /* ORDER ITEMS */

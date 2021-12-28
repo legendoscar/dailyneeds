@@ -4,20 +4,19 @@ namespace App\Http\Controllers;
 
 // use App\Models\;
 use App\Models\ProductsModel;
+use App\Models\StoresModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Gate;
 
 class ProductsController extends Controller 
 {
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['showAllProducts', 'showOneProduct']]);
+        $this->middleware('auth:api', ['except' => ['showAllProducts', 'showOneProduct', 'showStoreProducts']]);
+        $this->middleware('store', ['only' => ['createProduct']]);
         
-        $this->middleware('store', ['except' => [
-            // 'showAllProducts',
-            'showOneProduct']]);
-        // $this->middleware('admin', ['only' => ['createCat','updateCat', 'deleteCat', 'deleteCatPerm']]);
     }
 
 
@@ -38,60 +37,32 @@ class ProductsController extends Controller
     {
         return $ProductsModel->showOneProduct($request->id);
     }
+    
+    
+    public function showStoreProducts(Request $request, ProductsModel $ProductsModel)
+    {
+        // return $request->all();
+            return $ProductsModel->showStoreProducts($request->id, $request);
+        
+    }
 
 
     public function createProduct(Request $request, ProductsModel $ProductsModel)
     {          
-        if(auth()->guard('store')){
-
-            $rules = [
-                'prod_cat_id' => 'bail|required|numeric|exists:sub_categories,id',
-                'store_id' => 'bail|required|numeric|exists:stores,id',
-                'product_title' => 'bail|required|string',
-                'product_sub_title' => 'bail|string',
-                'product_desc' => 'bail|string',
-                'unit' => 'bail|string',
-                'price' => 'bail|required|regex:/^\d+(\.\d{1,2})?$/',
-                'product_banner_img' => 'bail|file',
-                'product_code' => 'bail|string',
-            ];
-
-            $validator = Validator::make($request->all(), $rules);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'errorMsg' => $validator->errors(), 
-                    'statusCode' => 422
-                ]);
-            };        
-            return $ProductsModel->createProduct($request);
-        }
-    
-        return response()->json([
-            'msg' => 'Forbidden! Not allowed to create products!',
-            'statusCode' => 409
-        ]);
-    }
-
-
-    public function updateProduct(Request $request, ProductsModel $ProductsModel)
-    {
-
         $rules = [
-            'prod_cat_id' => 'bail|numeric|exists:sub_categories,id',
-            'store_id' => 'bail|numeric|exists:stores,id',
-            'product_title' => 'bail|string',
+            'prod_cat_id' => 'bail|required|numeric|exists:sub_categories,id',
+            'store_id' => 'bail|required|numeric|exists:stores,id',
+            'product_title' => 'bail|required|string',
             'product_sub_title' => 'bail|string',
             'product_desc' => 'bail|string',
             'unit' => 'bail|string',
+            'product_price' => 'bail|required|regex:/^\d+(\.\d{1,2})?$/',
             'product_banner_img' => 'bail|file',
-            'product_code' => 'bail|string',
-            'price' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
-            'old_price' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
-            'is_available' => 'bail|integer',
-            'is_new' => 'bail|integer',
-            'is_popular' => 'bail|integer',
-            'is_recommended' => 'bail|integer',
+            'product_code' => 'bail|string|unique:products,product_code',
+            'is_available' => 'bail|boolean',
+            'is_new' => 'bail|boolean',
+            'is_popular' => 'bail|boolean',
+            'is_recommended' => 'bail|boolean',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -101,11 +72,66 @@ class ProductsController extends Controller
                 'errorMsg' => $validator->errors(), 
                 'statusCode' => 422
             ]);
-         };
+        };        
+        return $ProductsModel->createProduct($request);
+       
+    }
 
-         return $request->all();
 
-         return $ProductsModel->updateProduct($request);
+    public function updateProduct(Request $request, ProductsModel $ProductsModel, $id)
+    {
+
+        $ProductsModelData = ProductsModel::findOrFail($id);
+
+       $response = $this->authorize('getProductOwner', $ProductsModelData);
+
+        if($response->allowed()){
+            // return 33;
+            $rules = [
+                'prod_cat_id' => 'bail|numeric|exists:sub_categories,id',
+                'store_id' => 'bail|numeric|exists:stores,id',
+                'product_title' => 'bail|string',
+                'product_sub_title' => 'bail|string',
+                'product_desc' => 'bail|string',
+                'unit' => 'bail|string',
+                'product_banner_img' => 'bail|file',
+                'product_code' => 'bail|string',
+                'product_price' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
+                'old_price' => 'bail|regex:/^\d+(\.\d{1,2})?$/',
+                'is_available' => 'bail|integer',
+                'is_new' => 'bail|integer',
+                'is_popular' => 'bail|integer',
+                'is_recommended' => 'bail|integer',
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                return response()->json([
+                    'errorMsg' => $validator->errors(), 
+                    'statusCode' => 422
+                ]);
+             };
+
+             return $ProductsModel->updateProduct($request);
+
+        }
+        return 2;
+        // return $ProductsModel->store_id === $StoresModel->id;
+        // Gate::allowIf(fn ($user) => auth()->user()->user_role === 1);
+
+        // Gate::before(function ($user, $ProductsModelData) {
+        //     if (auth()->user()->user_role === 1) {
+        //         return true;
+        //     }
+        // });
+
+        // if(Gate::denies('getProductOwner', $ProductsModelData)){
+        // //     return $ProductsModel->store_id;
+        //     return 33;
+        // };
+
+        //  return $request->all();
 
        
     }
@@ -115,19 +141,26 @@ class ProductsController extends Controller
     {
 
         // return $ProductsModel->ProductCategory();
-        try {
-            ProductsModel::findorFail($id)->delete();
-            return response()->json([
-                'msg' => 'Deleted successfully!',
-                'statusCode' => 200]);
-            }catch(\Exception $e){
+        $ProductsModelData = ProductsModel::findOrFail($id);
+
+       $response = $this->authorize('getProductOwner', $ProductsModelData);
+
+        if($response->allowed()){
+            try {
+                $ProductsModelData->delete();
                 return response()->json([
-                    'msg' => 'Delete operation failed!',
-                    'err' => $e->getMessage(),
-                    'statusCode' => 409
-                ]);
+                    'msg' => 'Deleted successfully!',
+                    'statusCode' => 200]);
+                }catch(\Exception $e){
+                    return response()->json([
+                        'msg' => 'Delete operation failed!',
+                        'err' => $e->getMessage(),
+                        'statusCode' => 409
+                    ]);
+            }
         }
     }
+
 
     public function ProductBelongsTo($id){
         try {

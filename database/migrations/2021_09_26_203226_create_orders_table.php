@@ -18,14 +18,14 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('from');
             $table->unsignedBigInteger('to'); 
-            $table->float('fare');
+            $table->float('fare')->default(1000.00);
             $table->float('old_fare')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('from')->references('store_location_id')->on('stores');
-            $table->foreign('to')->references('user_location_id')->on('users');
+            $table->foreign('from')->references('id')->on('locations');
+            $table->foreign('to')->references('id')->on('locations');
         });
 
 
@@ -41,9 +41,10 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('location');
             $table->unsignedBigInteger('destination_address');
 
-            $table->float('tax_charge', 8, 2)->unsigned()->nullable();
+            $table->unsignedFloat('tax_charge', 8, 2)->nullable();
+            $table->unsignedFloat('packaging', 8, 2)->default(300);
             $table->float('store_charge', 8, 2)->unsigned()->nullable();
-            $table->float('delivery_charge', 8, 2)->unsigned()->nullable();
+            $table->unsignedBigInteger('delivery_charge')->default(1000);
             $table->float('total_amount', 8, 2)->unsigned();
 
             $table->enum('delivery_mode', ['pick-up', 'delivery'])->default('delivery');
@@ -68,9 +69,9 @@ class CreateOrdersTable extends Migration
             $table->dateTime('time_order_processing')->nullable();
             $table->dateTime('time_order_in_transit')->nullable();
             $table->dateTime('time_order_delivered')->nullable();
-            $table->boolean('is_complete')->nullable()->default(false);
+            $table->boolean('is_complete')->default(0);
             
-            $table->boolean('is_repeat')->default(false);
+            $table->boolean('is_repeat')->default(0);
             $table->integer('repeat_count')->default(0);
 
             $table->rememberToken(); 
@@ -82,6 +83,7 @@ class CreateOrdersTable extends Migration
             $table->foreign('driver_id')->references('id')->on('driver_details');
             $table->foreign('destination_address')->references('id')->on('user_address');
             $table->foreign('location')->references('id')->on('locations');
+            $table->foreign('delivery_charge')->references('id')->on('location_fare');
         });
 
 
