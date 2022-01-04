@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
-Class CategoryModel extends Model {
+Class CategoryModel extends Model { 
 
     use SoftDeletes, HasFactory;
 

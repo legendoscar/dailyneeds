@@ -26,9 +26,10 @@ class CategoryModelFactory extends Factory
     public function definition()
     {
         return [
-            'cat_title' => $this->faker->unique()->firstName(),
+            'cat_title' => $this->faker->randomElement(['Supermarket', 'Restaurant', 'Pharmacy', 'Fast food',
+            'Snack Shop', 'Smoke Accessories Shop']), // for store categories
             'cat_desc' => $this->faker->paragraph(),
-            'cat_type' => $this->faker->numberBetween(1,2,3),  #1=>store  # 2=>product 3=>users
+            'cat_type' => 1,  #1=>store  # 2=>product 3=>users 
             'cat_image' => $this->faker->imageUrl(), 
 
         ];
