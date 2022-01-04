@@ -21,7 +21,8 @@ class StoresController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => ['getAllStores', 'getSingleStore']]);
+        $this->middleware('store', ['only' => ['updateStore', 'deleteStore']]);
     }
 
     public function getAllStores(StoresModel $StoresModel)
@@ -58,7 +59,7 @@ class StoresController extends Controller
             return response()->json([
                 'errorMsg' => $validator->errors(), 
                 'statusCode' => 422
-            ]);
+            ], 422);
          };
         
         return $StoresModel->createStore($request);
@@ -78,7 +79,7 @@ class StoresController extends Controller
              return response()->json([
                  'errorMsg' => $validator->errors(), 
                  'statusCode' => 422
-             ]);
+             ], 422);
           };
 
        $user = StoresModel::where('email', $request->input('email'))->first();
@@ -115,7 +116,7 @@ class StoresController extends Controller
             return response()->json([
                 'errorMsg' => $validator->errors(), 
                 'statusCode' => 422
-            ]);
+            ], 422);
          };
 
         return $StoresModel->updateStore($request);
@@ -127,14 +128,14 @@ class StoresController extends Controller
 
         $StoresModelData = StoresModel::findOrFail($id);
 
-        // return auth()->guard('store')->user()->id === $StoresModelData->id ? 'true' : 'false';
+        if(auth()->guard('store')->user()->id === $StoresModelData->id || auth()->user()->user_role === 1){
 
-        return $response = $this->authorize('getStoreOwner', $StoresModelData);
-
-        if($response->allowed()){
-
-            return $StoresModel->deleteStore($StoresModelData->id);
+            return $StoresModel->deleteStore($request->id);
         }
+        return response()->json([
+            'errorMsg' => 'Forbidden! Unauthorized access!',
+            'statusCode' => 422
+        ], 422);
     }
 
 
@@ -151,7 +152,7 @@ class StoresController extends Controller
 
             if(!$token){
             //   throw new JWTException('Token not provided');
-            return response()->json(['msg' => 'token_missing']);
+            return response()->json(['msg' => 'token_missing'], 404);
             }
             if (! $parse = JWTAuth::parseToken()) {
                 return response()->json(['user_not_found'], 404);
@@ -180,7 +181,7 @@ class StoresController extends Controller
             
             return response()->json([
                 'data' => auth()->guard('store')->user()
-            ]);
+            ], 200);
         }
 
     //

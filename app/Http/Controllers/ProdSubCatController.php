@@ -25,11 +25,11 @@ class ProdSubCatController extends Controller
                'data'=> $data,
                'msg' => 'Record returned successfully.',
                'statusCode' => 200
-           ])
+           ], 200)
            : $ret = response()->json([
            'msg' => 'No Record found.',
            'statusCode' => 404
-       ]);
+       ], 404);
 
        return $ret;
         }catch(\Exception $e){
@@ -37,7 +37,7 @@ class ProdSubCatController extends Controller
                 'msg' => 'Ooops! Error encountered!!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
     }
 
@@ -51,11 +51,11 @@ class ProdSubCatController extends Controller
                 'data'=> $data,
                 'msg' => 'Record returned successfully.',
                 'statusCode' => 200
-            ])
+            ], 200)
             : $ret = response()->json([
             'msg' => 'No Record found.',
             'statusCode' => 404
-        ]);
+        ], 404);
 
         return $ret;
 
@@ -64,7 +64,7 @@ class ProdSubCatController extends Controller
                 'msg' => 'Ooops! Error encountered!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
     }
 
@@ -109,13 +109,13 @@ class ProdSubCatController extends Controller
                 'data' => $SubCatModel,
                 'msg' => 'New Record created successfully',
                 'statusCode' => 201
-            ]);
+            ], 201);
         } catch(\Exception $e){
             return response()->json([
                 'msg' => 'Product Sub_category creation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
     }
 
@@ -147,13 +147,14 @@ class ProdSubCatController extends Controller
         return response()->json([
             'data' => $SubCatModel,
             'msg' => 'Records updated successfully.',
-            'statusCode' => 200]);
+            'statusCode' => 200
+        ], 200);
         }catch(\Exception $e){
             return response()->json([
                 'msg' => 'Update operation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
     }
 
@@ -166,13 +167,14 @@ class ProdSubCatController extends Controller
             SubCatModel::findorFail($id)->delete();
             return response()->json([
                 'msg' => 'Deleted successfully!',
-                'statusCode' => 200]);
+                'statusCode' => 200
+            ], 200);
             }catch(\Exception $e){
                 return response()->json([
                     'msg' => 'Delete operation failed!',
                     'err' => $e->getMessage(),
                     'statusCode' => 409
-                ]);
+                ], 409);
         }
     }
 
@@ -184,11 +186,11 @@ class ProdSubCatController extends Controller
                 'data'=> $data,
                 'msg' => 'Record returned successfully.',
                 'statusCode' => 200
-            ])
+            ], 200)
             : $ret = response()->json([
             'msg' => 'No Record found.',
             'statusCode' => 404
-        ]);
+        ], 404);
 
         return $ret;
 
@@ -198,7 +200,7 @@ class ProdSubCatController extends Controller
                 'msg' => 'Failed to retrieve data!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
     }
 }

@@ -32,14 +32,14 @@ Class LocationsModel extends Model {
                      'data' => $data,
                      'statusCode' => 200,
                      'msg' => $success
-         ])
-         : $ret = response()->json([
-             'data' => $data,
-             'msg' => $failed,
-             'statusCode' => 404
-         ]);
+                 ], 200)
+            : $ret = response()->json([
+                'data' => $data,
+                'msg' => $failed,
+                'statusCode' => 404
+            ], 404);
 
-         return $ret;
+            return $ret;
 
 
          }catch(\Exception $e){
@@ -47,7 +47,7 @@ Class LocationsModel extends Model {
                  'msg' => 'Ooops!! Error encountered!',
                  'err' => $e->getMessage(),
                  'statusCode' => 409
-             ]);
+             ], 409);
          }
     }
 
@@ -58,13 +58,13 @@ Class LocationsModel extends Model {
                 'data' => $this->all(),
                 'statusCode' => 200,
                 'msg' => 'Records returned successfully.'
-         ]);
+         ], 200);
          }catch(\Exception $e){
              return response()->json([
                  'msg' => 'No record found!', 
                  'err' => $e->getMessage(),
                  'statusCode' => 409
-             ]);
+             ], 409);
          }
     }
 
@@ -80,7 +80,7 @@ Class LocationsModel extends Model {
                 : $ret = response()->json([
                 'msg' => 'No Record found for location with ID: ' . $id,
                 'statusCode' => 404
-            ]);
+            ], 404);
     
             return $ret;
     
@@ -89,7 +89,7 @@ Class LocationsModel extends Model {
                     'msg' => 'Ooops! Error encountered!',
                     'err' => $e->getMessage(),
                     'statusCode' => 409
-                ]);
+                ], 409);
             }
     }
 
@@ -112,13 +112,13 @@ Class LocationsModel extends Model {
                 // 'total' => $count,
                 'msg' => 'New Location created successfully',
                 'statusCode' => 201
-            ]);
+            ], 201);
         } catch(\Exception $e){
             return response()->json([
                 'msg' => 'New Locations creation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
 
 
@@ -149,13 +149,14 @@ Class LocationsModel extends Model {
             return response()->json([
                 'data' => $LocationsModel,
                 'msg' => 'Location updated successfully.',
-                'statusCode' => 200]);
+                'statusCode' => 200
+            ], 200);
             }catch(\Exception $e){
                 return response()->json([
                     'msg' => 'Location update operation failed!',
                     'err' => $e->getMessage(),
                     'statusCode' => 409
-            ]); 
+            ], 409); 
         }
     }
 
@@ -168,13 +169,14 @@ Class LocationsModel extends Model {
             $this->findorFail($id)->delete();
             return response()->json([
                 'msg' => 'Deleted successfully!',
-                'statusCode' => 200]);
+                'statusCode' => 200
+            ], 200);
             }catch(\Exception $e){
                 return response()->json([
                     'msg' => 'Delete operation failed!',
                     'err' => $e->getMessage(),
                     'statusCode' => 409
-                ]);
+                ], 409);
         }
 
         // $data = $this->findorFail($id)->delete();

@@ -13,7 +13,7 @@
 
     class AuthController extends Controller
     {
-        protected $guard = 'users';
+        protected $guard = 'users'; 
 
         
         public function __construct()
@@ -115,7 +115,7 @@
                 'msg' => 'Login successful',
                 'tokenData' => $this->respondWithToken($token),
                 'userData' => auth()->user()                    
-            ]);
+            ], 200);
         }
         
          /**

@@ -40,7 +40,10 @@
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
         ]);
-        return response()->json(['status' => 'admin create success']);
+        return response()->json([
+            'status' => 'admin create success',
+            'statusCode' => 201
+        ], 201);
     }
 
     protected function createCustomer(Request $request)
@@ -51,7 +54,10 @@
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
         ]);
-        return response()->json(['status' => 'customer create success']);
+        return response()->json([
+            'status' => 'customer create success',
+            'statusCode' => 201
+    ], 201);
     }
 
     

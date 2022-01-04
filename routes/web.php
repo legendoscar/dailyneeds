@@ -65,6 +65,15 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->post('product', ['uses' => 'ProductsController@createProduct']);
         $router->put('product/{id}', ['uses' => 'ProductsController@updateproduct']);
         $router->delete('product/{id:[0-9]+}', ['uses' => 'ProductsController@deleteProduct']);
+        
+        
+        /* FAVORITE  */
+        // $router->get('product',  ['uses' => 'ProductsController@showAllProducts']);
+        // $router->get('product/{id:[0-9]+}', ['uses' => 'ProductsController@showOneProduct']);
+        // $router->get('product/store/{id:[0-9]+}', ['uses' => 'ProductsController@showStoreProducts']); //show products owned by stored
+        $router->post('product/{id}/favorites', ['uses' => 'FavoritesController@store']);
+        // $router->put('product/{id}', ['uses' => 'ProductsController@updateproduct']);
+        // $router->delete('product/{id:[0-9]+}', ['uses' => 'ProductsController@deleteProduct']);
 
         
         $router->get('product/{id:[0-9]+}/cat', ['uses' => 'ProductsController@ProductBelongsTo']);

@@ -21,8 +21,7 @@ class IsStoreMiddleware
      */
     public function handle($request, Closure $next)
     {
-// return 33;
-        if (auth()->guard('store')->user()) {
+        if (auth()->guard('store')->user() || auth()->user()->user_role === 1) {
             // return redirect('/');
             return $next($request);
         }

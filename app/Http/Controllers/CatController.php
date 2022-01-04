@@ -58,7 +58,7 @@ class CatController extends Controller
             return response()->json([
                 'errorMsg' => $validator->errors(), 
                 'statusCode' => 422
-            ]);
+            ], 422);
          };
 
         $CategoryModel = new CategoryModel;

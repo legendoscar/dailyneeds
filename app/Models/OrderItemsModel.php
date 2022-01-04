@@ -15,8 +15,8 @@ Class OrderItemsModel extends Model {
 
     protected $table = 'order_items';
 
-    protected $fillable = ['order_id', 'product_id', 'quantity', 'price'
-]; 
+    protected $fillable = ['order_id', 'product_id', 'quantity', 'amount'
+];  
 
     //  public function ProductsCategory(){
     //     return $this->hasOne('App\Models\ProductsSubCatModel', 'id', 'cat_id');
@@ -56,16 +56,16 @@ Class OrderItemsModel extends Model {
             return response()->json([
              'data' => $this->join('products', 'order_items.product_id', '=', 'products.id')
              ->get(),
-            //  ->get('products.created_at'),
+            //  ->get('products.created_at'), 
              'statusCode' => 200,
              'msg' => 'Records returned successfully.'
-         ]);
+         ], 200); 
          }catch(\Exception $e){
              return response()->json([
                  'msg' => 'No record found!', 
                  'err' => $e->getMessage(),
                  'statusCode' => 409
-             ]);
+             ], 409);
          }
     }
 
@@ -82,7 +82,7 @@ Class OrderItemsModel extends Model {
                 : $ret = response()->json([
                 'msg' => 'No Record found for product with ID: ' . $id,
                 'statusCode' => 404
-            ]);
+            ], 404);
     
             return $ret;
     
@@ -91,34 +91,47 @@ Class OrderItemsModel extends Model {
                     'msg' => 'Ooops! Error encountered!',
                     'err' => $e->getMessage(),
                     'statusCode' => 409
-                ]);
+                ], 409);
             }
     }
 
-    public function createOrderItem(Request $request, $last_id){
+    public function createOrderItem(Request $request, OrderItemsModel $OrderItemsModel){
         // return count($request->items);
         // return $request->all();
         try{
-            
+            // return $request->all()[0]['order_id'];
+            $count = count($request->all());
+            // return $count;
+            for ($i=0; $i < $count; $i++) {
+                $d = $request->all()[$i]['order_id'];
+                print $val[$i] = $d;
+            }
+            return $d;
+
             // foreach($request->all() as $item){
-                $OrderItemsModel = new OrderItemsModel;
+                // $OrderItemsModel = new OrderItemsModel;
                 
                $count = count($request->items);
                 for ($i=0; $i < $count; $i++) {
                
                     // return $request->items[0];
                     
-                    $data = [
-                            'order_id' => $last_id, 
-                            'product_id' => $request->items[$i]['product_id'], 
-                            'quantity' => $request->items[$i]['quantity'], 
-                            'amount' => $request->items[$i]['amount'],
-                            'created_at' => Carbon::now(),
-                            'updated_at' => Carbon::now(),
-                            'deleted_at' => NULL,
-                    ];
+                    // $data = [
+                    //         'order_id' => $last_id, 
+                    //         'product_id' => $request->items[$i]['product_id'], 
+                    //         'quantity' => $request->items[$i]['quantity'], 
+                    //         'amount' => $request->items[$i]['amount'],
+                    //         'created_at' => Carbon::now(),
+                    //         'updated_at' => Carbon::now(),
+                    //         'deleted_at' => NULL,
+                    // ];
 
-                    $OrderItemsModel->insert($data);
+                $OrderItemsModel->order_id = $request->items[$i]['order_id'];
+                $OrderItemsModel->product_id = $request->items[$i]['product_id'];
+                $OrderItemsModel->amount = $request->items[$i]['amount'];
+                $OrderItemsModel->quantity = $request->items[$i]['quantity'];
+
+                    $OrderItemsModel->save();
                 }
             // }
             return response()->json([
@@ -126,13 +139,13 @@ Class OrderItemsModel extends Model {
                 'total' => $count,
                 'msg' => 'New Order Item created successfully',
                 'statusCode' => 201
-            ]);
+            ], 201);
         } catch(\Exception $e){
             return response()->json([
                 'msg' => 'New Order Item creation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
 
 
@@ -161,19 +174,20 @@ Class OrderItemsModel extends Model {
             return response()->json([
                 'data' => $OrderItemsModel,
                 'msg' => 'Order Items updated successfully.',
-                'statusCode' => 200]);
+                'statusCode' => 200
+            ], 200);
             }catch(\Exception $e){
                 return response()->json([
                     'msg' => 'Order Items update operation failed!',
                     'err' => $e->getMessage(),
                     'statusCode' => 409
-            ]);
+            ], 409);
         }
     }
 
 
     public function deleteOrderItem($id){
-
+ 
         // return 33;
 
         $data = $this->findorFail($id)->delete();

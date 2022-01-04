@@ -25,7 +25,7 @@ class CreateOrdersTable extends Migration
             $table->softDeletes();
 
             $table->foreign('from')->references('id')->on('locations');
-            $table->foreign('to')->references('id')->on('locations');
+            $table->foreign('to')->references('id')->on('locations'); 
         });
 
 

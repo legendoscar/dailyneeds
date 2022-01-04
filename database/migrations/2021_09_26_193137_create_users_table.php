@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('role_name')->unique();
 
             
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->default(true); 
             $table->timestamps();
             $table->rememberToken();
             $table->softDeletes();

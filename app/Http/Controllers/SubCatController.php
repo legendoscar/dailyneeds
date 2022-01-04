@@ -83,7 +83,7 @@ class SubCatController extends Controller
             return response()->json([
                 'errorMsg' => $validator->errors(), 
                 'statusCode' => 422
-            ]);
+            ], 422);
          };
 
         $SubCatModel = new SubCatModel;

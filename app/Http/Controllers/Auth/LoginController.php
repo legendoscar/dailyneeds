@@ -64,9 +64,9 @@ class LoginController extends Controller
 
         if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
 
-            return response()->json(['status' => 'admin login success']);
+            return response()->json(['status' => 'admin login success'], 200);
         }else{
-            return response()->json(['status' => 'admin login fail'],401);
+            return response()->json(['status' => 'admin login fail'], 401);
         }
     }
 
@@ -80,9 +80,9 @@ class LoginController extends Controller
 
         if (Auth::guard('customer')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
 
-            return response()->json(['status' => 'customer login success']);
+            return response()->json(['status' => 'customer login success'], 200);
         }else{
-            return response()->json(['status' => 'customer login fail'],401);
+            return response()->json(['status' => 'customer login fail'], 401);
         }
     }
   

@@ -20,7 +20,7 @@ class UserRolesModelFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition() 
     {
         return [
             // 'user_type' => $this->faker->numberBetween(1,3), 

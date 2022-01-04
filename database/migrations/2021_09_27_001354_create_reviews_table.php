@@ -35,22 +35,7 @@ class CreateReviewsTable extends Migration
 
 
 
-        Schema::create('favorites', function (Blueprint $table) { #favorites for product & store
-            $table->id();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->unsignedBigInteger('driver_id')->nullable();
-            $table->unsignedBigInteger('store_id')->nullable();
-            $table->unsignedBigInteger('product_id')->nullable();
-
-            $table->timestamps();
-            $table->softDeletes();
-
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('driver_id')->references('id')->on('driver_details');
-            $table->foreign('store_id')->references('id')->on('stores'); 
-            $table->foreign('product_id')->references('id')->on('products');
-
-        });
+       
     }
 
     /**
@@ -61,6 +46,5 @@ class CreateReviewsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('reviews');
-        Schema::dropIfExists('favorites');
     }
 }

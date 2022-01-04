@@ -32,7 +32,7 @@
                 return response()->json([
                     'errorMsg' => $validator->errors(), 
                     'statusCode' => 422
-                ]);
+                ], 422);
              };
         }
         
@@ -64,7 +64,7 @@
                 return response()->json([
                     'errorMsg' => $validator->errors(), 
                     'statusCode' => 422
-                ]);
+                ], 422);
              };
     
             
@@ -94,7 +94,7 @@
                 return response()->json([
                     'errorMsg' => $validator->errors(), 
                     'statusCode' => 422
-                ]);
+                ], 422);
              };
     
              $type = 'Store';
@@ -123,7 +123,7 @@
                 'statusCode' => 200,                    
                 'msg' =>  $type . ' Login Success',                    
                 'userData' => $data,
-            ]);
+            ], 200);
         }
 
         
@@ -147,7 +147,7 @@
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Successfully logged out'], 200);
     }
 
     

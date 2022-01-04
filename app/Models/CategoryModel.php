@@ -38,12 +38,12 @@ Class CategoryModel extends Model {
                      'data' => $data,
                      'statusCode' => 200,
                      'msg' => $success
-         ])
+                 ], 200)
          : $ret = response()->json([
              'data' => $data,
              'msg' => $failed,
-             'statusCode' => 404
-         ]);
+             'statusCode' => 422
+         ], 422);
 
          return $ret;
 
@@ -53,7 +53,7 @@ Class CategoryModel extends Model {
                  'msg' => 'Ooops!! Error encountered!',
                  'err' => $e->getMessage(),
                  'statusCode' => 409
-             ]);
+             ], 409);
          }
     }
 
@@ -119,13 +119,13 @@ Class CategoryModel extends Model {
                 'data' => $CategoryModel,
                 'msg' => 'New '. $type. ' category created successfully',
                 'statusCode' => 201
-            ]);
+            ], 201);
          }catch(\Exception $e){
             return response()->json([
                 'msg' => 'Store '. $type . 'Category creation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
     }
 
@@ -173,14 +173,15 @@ Class CategoryModel extends Model {
             return response()->json([
                 'data' => $CategoryModel,
                 'msg' => $type . ' updated successfully.',
-                'statusCode' => 200]);
+                'statusCode' => 200
+            ], 200);
         }
         catch(\Exception $e){
             return response()->json([
                 'msg' => $type . ' update operation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
 
 
@@ -212,13 +213,14 @@ Class CategoryModel extends Model {
             return response()->json([
                 'data' => $data,
                 'msg' => 'Sub Category selection successful!',
-                'statusCode' => 200]);
+                'statusCode' => 200,
+            ], 200);
         }catch(\Exception $e){
             return response()->json([
                 'msg' => 'Failed to retrieve data!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
     }
 }

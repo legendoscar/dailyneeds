@@ -18,7 +18,7 @@ class CreateStoresTable extends Migration
             // $table->unsignedBigInteger('user_id');
             $table->string('name')->unique();
             $table->string('desc'); 
-            $table->string('location_country_name');
+            $table->string('location_country_name'); 
             $table->string('location_country_code');
 
             $table->boolean('is_popular')->default(false);

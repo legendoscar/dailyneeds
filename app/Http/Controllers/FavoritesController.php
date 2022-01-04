@@ -3,20 +3,22 @@
 namespace App\Http\Controllers;
 
 // use App\Models\;
-use App\Models\ProductsModel;
-use App\Models\StoresModel;
 use App\Models\FavoritesModel;
+use App\Models\ProductsModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
+use Closure;
 
-class ProductsController extends Controller 
+
+class FavoritesController extends Controller 
 {
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['showAllProducts', 'showOneProduct', 'showStoreProducts']]);
-        $this->middleware('store', ['only' => ['createProduct']]);
+        $this->middleware('auth:api');
+        // $this->middleware('store', ['only' => ['createProduct']]);
         
     }
 
@@ -27,65 +29,67 @@ class ProductsController extends Controller
      * @return void
      */
 
-    public function showAllProducts(ProductsModel $ProductsModel)
+    public function showAllProducts(FavoritesModel $FavoritesModel)
     { 
 
-       return $ProductsModel->productGetAll();
+       return $FavoritesModel->productGetAll();
     }
 
 
-    public function showOneProduct(Request $request, ProductsModel $ProductsModel, FavoritesModel $FavoritesModel)
+    public function showOneProduct(Request $request, FavoritesModel $FavoritesModel)
     {
         // return $FavoritesModel->productsHas;
-        return $ProductsModel->showOneProduct($request->id);
+        return $FavoritesModel->showOneProduct($request->id);
     }
     
     
-    public function showStoreProducts(Request $request, ProductsModel $ProductsModel)
+    public function showStoreProducts(Request $request, FavoritesModel $FavoritesModel)
     {
         // return $request->all();
-            return $ProductsModel->showStoreProducts($request->id, $request);
+        return $FavoritesModel->showStoreProducts($request->id, $request);
         
     }
 
 
-    public function createProduct(Request $request, ProductsModel $ProductsModel)
+    public function store(Request $request, ProductsModel $ProductsModel, Closure $next)
     {          
+        // return $ProductsModel->favorite();
+
+
         $rules = [
-            'prod_cat_id' => 'bail|required|numeric|exists:sub_categories,id',
-            'store_id' => 'bail|required|numeric|exists:stores,id',
-            'product_title' => 'bail|required|string',
-            'product_sub_title' => 'bail|string',
-            'product_desc' => 'bail|string',
-            'unit' => 'bail|string',
-            'product_price' => 'bail|required|regex:/^\d+(\.\d{1,2})?$/',
-            'product_banner_img' => 'bail|file',
-            'product_code' => 'bail|string|unique:products,product_code',
-            'is_available' => 'bail|boolean',
-            'is_new' => 'bail|boolean',
-            'is_popular' => 'bail|boolean',
-            'is_recommended' => 'bail|boolean',
+            'user_id' => 'bail|required|numeric|exists:users,id',
+            // 'store_id' => 'bail|required|numeric|exists:stores,id',
+            'product_id' => 'bail|required|numeric|exists:products,id',
+            // 'is_fav_store' => 'bail|boolean',
+            // 'is_fav_product' => 'bail|boolean',
         ];
 
         $validator = Validator::make($request->all(), $rules);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'errorMsg' => $validator->errors(), 
-                'statusCode' => 422
-            ], 422);
-        };        
-        return $ProductsModel->createProduct($request);
+        return $this->validateData($validator, $request, $next);
+
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'errorMsg' => $validator->errors(), 
+        //         'statusCode' => 422
+        //     ]);
+        // };        
+
+
+        return 34;
+        // return $FavoritesModel->createFavoriteProduct($request);
+
+
        
     }
 
 
-    public function updateProduct(Request $request, ProductsModel $ProductsModel, $id)
+    public function updateProduct(Request $request, FavoritesModel $FavoritesModel, $id)
     {
 
-        $ProductsModelData = ProductsModel::findOrFail($id);
+        $FavoritesModelData = FavoritesModel::findOrFail($id);
 
-       $response = $this->authorize('getProductOwner', $ProductsModelData);
+        $response = $this->authorize('getProductOwner', $FavoritesModelData);
 
         if($response->allowed()){
             $rules = [
@@ -114,21 +118,21 @@ class ProductsController extends Controller
                 ], 422);
              };
 
-             return $ProductsModel->updateProduct($request);
+             return $FavoritesModel->updateProduct($request);
 
         }
         return 2;
-        // return $ProductsModel->store_id === $StoresModel->id;
+        // return $FavoritesModel->store_id === $StoresModel->id;
         // Gate::allowIf(fn ($user) => auth()->user()->user_role === 1);
 
-        // Gate::before(function ($user, $ProductsModelData) {
+        // Gate::before(function ($user, $FavoritesModelData) {
         //     if (auth()->user()->user_role === 1) {
         //         return true;
         //     }
         // });
 
-        // if(Gate::denies('getProductOwner', $ProductsModelData)){
-        // //     return $ProductsModel->store_id;
+        // if(Gate::denies('getProductOwner', $FavoritesModelData)){
+        // //     return $FavoritesModel->store_id;
         //     return 33;
         // };
 
@@ -141,18 +145,17 @@ class ProductsController extends Controller
     public function deleteProduct($id)
     {
 
-        // return $ProductsModel->ProductCategory();
-        $ProductsModelData = ProductsModel::findOrFail($id);
+        // return $FavoritesModel->ProductCategory();
+        $FavoritesModelData = FavoritesModel::findOrFail($id);
 
-       $response = $this->authorize('getProductOwner', $ProductsModelData);
+       $response = $this->authorize('getProductOwner', $FavoritesModelData);
 
         if($response->allowed()){
             try {
-                $ProductsModelData->delete();
+                $FavoritesModelData->delete();
                 return response()->json([
                     'msg' => 'Deleted successfully!',
-                    'statusCode' => 200
-                ], 200);
+                    'statusCode' => 200]);
                 }catch(\Exception $e){
                     return response()->json([
                         'msg' => 'Delete operation failed!',
@@ -166,12 +169,11 @@ class ProductsController extends Controller
 
     public function ProductBelongsTo($id){
         try {
-            $data = ProductsModel::find($id)->ProductsCategory;
+            $data = FavoritesModel::find($id)->ProductsCategory;
             return response()->json([
                 'msg' => 'Category selection successful!',
                 'data' => $data,
-                'statusCode' => 200
-            ], 200);
+                'statusCode' => 200]);
         }catch(\Exception $e){
             return response()->json([
                 'msg' => 'Failed to retrieve data!',
@@ -184,7 +186,7 @@ class ProductsController extends Controller
     
     // public function ProductBelongsToStore($id){
     //     try {
-    //         $data = ProductsModel->
+    //         $data = FavoritesModel->
     //         where('store_id', auth()->user()->id);
     //         // ProductsCategory;
     //         return response()->json([

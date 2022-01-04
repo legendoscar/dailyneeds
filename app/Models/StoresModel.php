@@ -186,14 +186,15 @@ Class StoresModel extends Model implements AuthenticatableContract, Authorizable
             return response()->json([
                 'data' => $StoreModel,
                 'msg' => 'Store Records updated successfully.',
-                'statusCode' => 200]);
+                'statusCode' => 200
+            ], 200);
         }
         catch(\Exception $e){
             return response()->json([
                 'msg' => 'Store Update operation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
 
 

@@ -76,7 +76,7 @@ class UserAddressController extends Controller
                 return response()->json([
                     'errorMsg' => $validator->errors(), 
                     'statusCode' => 422
-                ]);
+                ], 422);
              };
 
             return $UserAddressModel->createUserAddress($request);
@@ -112,7 +112,7 @@ class UserAddressController extends Controller
             return response()->json([
                 'errorMsg' => $validator->errors(), 
                 'statusCode' => 422
-            ]);
+            ], 422);
          };
 
         //  return $request->all();
@@ -151,13 +151,14 @@ class UserAddressController extends Controller
             return response()->json([
                 'msg' => 'Category selection successful!',
                 'data' => $data,
-                'statusCode' => 200]);
+                'statusCode' => 200
+            ], 200);
         }catch(\Exception $e){
             return response()->json([
                 'msg' => 'Failed to retrieve data!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
     }
 

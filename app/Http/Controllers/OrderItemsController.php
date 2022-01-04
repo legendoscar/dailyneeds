@@ -12,7 +12,7 @@ class OrderItemsController extends Controller
     public function __construct()
     {
         $this->middleware('admin', ['only' => [
-            // 'showAllOrderItems',
+            'showAllOrderItems',
             //  'showOneOrderItem', 
             //  'deleteOrderItem'
              ]]);
@@ -57,7 +57,7 @@ class OrderItemsController extends Controller
                 return response()->json([
                     'errorMsg' => $validator->errors(), 
                     'statusCode' => 422
-                ]);
+                ], 422);
              };
 
             return $OrderItemsModel->createOrderItem($request);
@@ -86,7 +86,7 @@ class OrderItemsController extends Controller
             return response()->json([
                 'errorMsg' => $validator->errors(), 
                 'statusCode' => 422
-            ]);
+            ], 422);
          };
 
         //  return $request->all();
@@ -105,13 +105,14 @@ class OrderItemsController extends Controller
             OrderItemsModel::findorFail($id)->delete();
             return response()->json([
                 'msg' => 'Deleted successfully!',
-                'statusCode' => 200]);
-            }catch(\Exception $e){
+                'statusCode' => 200
+            ], 200);
+            }catch(\Exception $e){ 
                 return response()->json([
                     'msg' => 'Delete operation failed!',
                     'err' => $e->getMessage(),
                     'statusCode' => 409
-                ]);
+                ], 409);
         }
     }
 
@@ -121,13 +122,14 @@ class OrderItemsController extends Controller
             return response()->json([
                 'msg' => 'Category selection successful!',
                 'data' => $data,
-                'statusCode' => 200]);
+                'statusCode' => 200
+            ], 200);
         }catch(\Exception $e){
             return response()->json([
                 'msg' => 'Failed to retrieve data!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
     }
 

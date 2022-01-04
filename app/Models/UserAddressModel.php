@@ -58,13 +58,13 @@ Class UserAddressModel extends Model {
                 'data' => $this->all(),
                 'statusCode' => 200,
                 'msg' => 'Records returned successfully.'
-         ]);
+         ], 200);
          }catch(\Exception $e){
              return response()->json([
                  'msg' => 'No record found!', 
                  'err' => $e->getMessage(),
                  'statusCode' => 409
-             ]);
+             ], 409);
          }
     }
 
@@ -78,11 +78,11 @@ Class UserAddressModel extends Model {
                     'data'=> $data,
                     'msg' => 'Record returned successfully.',
                     'statusCode' => 200
-                ])
+                ], 200)
                 : $ret = response()->json([
                 'msg' => 'No Record found for location with ID: ' . $id,
                 'statusCode' => 404
-            ]);
+            ], 404);
     
             return $ret; 
     
@@ -91,7 +91,7 @@ Class UserAddressModel extends Model {
                     'msg' => 'Ooops! Error encountered!',
                     'err' => $e->getMessage(),
                     'statusCode' => 409
-                ]);
+                ], 409);
             }
     }
 
@@ -119,13 +119,13 @@ Class UserAddressModel extends Model {
                 // 'total' => $count,
                 'msg' => 'New User address created successfully',
                 'statusCode' => 201
-            ]);
+            ], 201);
         } catch(\Exception $e){
             return response()->json([
                 'msg' => 'New user address creation failed!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
-            ]);
+            ], 409);
         }
     }
 
@@ -156,13 +156,14 @@ Class UserAddressModel extends Model {
             return response()->json([
                 'data' => $UserAddressModel,
                 'msg' => 'User Address updated successfully.',
-                'statusCode' => 200]);
+                'statusCode' => 200
+            ], 200);
             }catch(\Exception $e){
                 return response()->json([
                     'msg' => 'User Address update operation failed!',
                     'err' => $e->getMessage(),
                     'statusCode' => 409
-            ]); 
+            ], 409); 
         }
     }
 
@@ -175,13 +176,14 @@ Class UserAddressModel extends Model {
             $this->findorFail($id)->delete();
             return response()->json([
                 'msg' => 'Deleted successfully!',
-                'statusCode' => 200]);
+                'statusCode' => 200
+            ], 200);
             }catch(\Exception $e){
                 return response()->json([
                     'msg' => 'Delete operation failed!',
                     'err' => $e->getMessage(),
                     'statusCode' => 409
-                ]);
+                ], 409);
         }
 
         // $data = $this->findorFail($id)->delete();
